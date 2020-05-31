@@ -1,31 +1,54 @@
 function Remove-RecentFile {
     <#
     .SYNOPSIS
-        Deletes all dead shortcuts in Recent folder.
+        Deletes shortcuts in Recent folder based on specified criterion.
     .DESCRIPTION
-        Deletes all dead shortcuts in Recent folder.
+        Deletes shortcuts in Recent folder. If All is specified (and true), then it will delete all shortcuts.
+        If MinDate is specified, it will delete all links older than MinDate. If neither MinDate or All is specified, it will delete dead shortcuts.
     .EXAMPLE
-        Remove-RecentFile -Force
+        Remove-RecentFile -WhatIf
+    .EXAMPLE
+        Remove-RecentFile -WhatIf -MinDate '5/31/2020'
     #>
-    [CmdletBinding(SupportsShouldProcess = $True)]
+    [CmdletBinding(DefaultParameterSetName = 'Default', SupportsShouldProcess = $True, ConfirmImpact = 'High')]
     param
     (
-        [switch] $Force
+        [switch] $Force,
+
+        [Parameter(ParameterSetName = 'Default')]
+        [switch] $All,
+
+        [Parameter(ParameterSetName = 'Date')]
+        [datetime]$MinDate
     )
 
     $PSBoundParameters["Confirm"] = $false
     $PSBoundParameters["WhatIf"] = $false
     $PSBoundParameters["Verbose"] = $false
 
+    if ($Force -and -not $Confirm) {
+        $ConfirmPreference = 'None'
+    }
+
     $shell = New-Object -Com Shell.Application
     $recent = [Environment]::GetFolderPath("Recent")
 
+    if ($PSCmdlet.ParameterSetName -eq 'Default') {
+        if ($All) {
+            $sb = { $_.IsLink }
+        } else {
+            $sb = { $_.IsLink -and ([String]::IsNullOrEmpty($_.GetLink.Path) -or !(Test-Path $_.GetLink.Path)) }
+        }
+    } else {
+        $sb = { $_.IsLink -and ($_.ModifyDate -lt $MinDate) }
+    }
+
     $shell.Namespace($recent).Items() |
-    Where-Object { $_.IsLink -and ([String]::IsNullOrEmpty($_.GetLink.Path) -or !(Test-Path $_.GetLink.Path)) } |
+    Where-Object $sb |
     ForEach-Object {
-        if ($PSCmdlet.ShouldProcess($_.Path, "Remove dead shortcut")) {
+        if ($PSCmdlet.ShouldProcess($_.Path, "Remove shortcut")) {
             Remove-Item -LiteralPath $_.Path @PsBoundParameters;
         }
     }
-    [System.Runtime.Interopservices.Marshal]::ReleaseComObject($shell)
+    $null = [System.Runtime.Interopservices.Marshal]::ReleaseComObject($shell)
 }
