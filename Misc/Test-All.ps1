@@ -8,7 +8,7 @@ function Test-All {
     .PARAMETER Values
         The values you want to test.
     .PARAMETER Predicate
-        The predicate to test values with.
+        The scriptblock to test values with. Should return bool.
     .EXAMPLE
         Test-All @("a","b","?") {param([string] $s) $s -match '\w' }
     .EXAMPLE

@@ -1,20 +1,20 @@
 function Test-Any {
     <#
     .SYNOPSIS
-    Returns True if Predicate evaluates to True for any of the supplied values.
+        Returns True if Predicate evaluates to True for any of the supplied values.
     .DESCRIPTION
-    Returns True if Predicate evaluates to True for any of the supplied values.
-    If value is null, then the result is false.
+        Returns True if Predicate evaluates to True for any of the supplied values.
+        If value is null, then the result is false.
     .PARAMETER Values
-    The values you want to test.
+        The values you want to test.
     .PARAMETER Predicate
-    The predicate to test values with.
+        The scriptblock to test values with. Should return bool.
     .EXAMPLE
-    Test-Any @("a","b","?") {param([string] $s) $s -match '\w' }
+        Test-Any @("a","b","?") {param([string] $s) $s -match '\w' }
     .EXAMPLE
-    Test-Any (1..3) {param($x) $x % 3 -eq 0}
+        Test-Any (1..3) {param($x) $x % 3 -eq 0}
     .EXAMPLE
-    Test-Any $null {param($x) $x % 3 -eq 0}
+        Test-Any $null {param($x) $x % 3 -eq 0}
     #>
     param
     (
