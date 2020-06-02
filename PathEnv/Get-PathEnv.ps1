@@ -47,7 +47,7 @@ function Get-PathEnv {
     )
     begin {
         if ($PSCmdlet.ParameterSetName -eq 'Target') {
-            $Path = [System.Environment]::GetEnvironmentVariable('Path', $EnvTarget)
+            $Path = [System.Environment]::GetEnvironmentVariable('PATH', $EnvTarget)
         }
         function get-val([string]$val) {
             if ($NoTrim) {
