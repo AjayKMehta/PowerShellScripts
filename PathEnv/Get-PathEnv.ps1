@@ -1,38 +1,38 @@
-<#
-.SYNOPSIS
-    Get paths specified in input PATH environment variable or string.
-.DESCRIPTION
-    Get paths specified in PATH environment variable or string.
-.PARAMETER Target
-    The environment (Machine, Process, User) whose path variable you wish to inspect.
-.PARAMETER Path
-    The string whom you wish to split into its component paths.
-.PARAMETER NoTrim
-    If set, do not trim returned values.
-.NOTES
-    This will automatically trim paths returned unless NoTrim is set. If used with Path as opposed to Target, environment variables will not be replaced by their corresponding values in returned results, e.g. it will not replace %TMP% with "C:\Users\$($env:UserName)\AppData\Local\Temp".
-.EXAMPLE
-    Get-PathEnv -Path 'C:\temp; D:\git'
-.EXAMPLE
-    Get-PathEnv -Path 'C:\temp; D:\git;"D:\temp\test;"'
-
-    Output is:
-    C:\temp
-    D:\git
-    D:\temp\test;
-.EXAMPLE
-    Get-PathEnv -Path 'C:\temp;"D:\temp\test;";%AppData%\code'
-
-    Output is:
-    C:\temp
-    D:\temp\test;
-    %AppData%\code
-
-    Notice how this does not replaces %AppData% with its value!
-.EXAMPLE
-    Get-PathEnv 'Machine' | Out-File C:\temp\path-test.txt -Encoding UTF8
-#>
 function Get-PathEnv {
+    <#
+    .SYNOPSIS
+        Get paths specified in input PATH environment variable or string.
+    .DESCRIPTION
+        Get paths specified in PATH environment variable or string.
+    .PARAMETER Target
+        The environment (Machine, Process, User) whose path variable you wish to inspect.
+    .PARAMETER Path
+        The string whom you wish to split into its component paths.
+    .PARAMETER NoTrim
+        If set, do not trim returned values.
+    .NOTES
+        This will automatically trim paths returned unless NoTrim is set. If used with Path as opposed to Target, environment variables will not be replaced by their corresponding values in returned results, e.g. it will not replace %TMP% with "C:\Users\$($env:UserName)\AppData\Local\Temp".
+    .EXAMPLE
+        Get-PathEnv -Path 'C:\temp; D:\git'
+    .EXAMPLE
+        Get-PathEnv -Path 'C:\temp; D:\git;"D:\temp\test;"'
+
+        Output is:
+        C:\temp
+        D:\git
+        D:\temp\test;
+    .EXAMPLE
+        Get-PathEnv -Path 'C:\temp;"D:\temp\test;";%AppData%\code'
+
+        Output is:
+        C:\temp
+        D:\temp\test;
+        %AppData%\code
+
+        Notice how this does not replaces %AppData% with its value!
+    .EXAMPLE
+        Get-PathEnv 'Machine' | Out-File C:\temp\path-test.txt -Encoding UTF8
+    #>
     [CmdletBinding(DefaultParameterSetName = 'Target')]
     Param (
         [Parameter(Mandatory = $false, ParameterSetName = 'Target', Position = 0)]
@@ -49,6 +49,13 @@ function Get-PathEnv {
         if ($PSCmdlet.ParameterSetName -eq 'Target') {
             $Path = [System.Environment]::GetEnvironmentVariable('Path', $EnvTarget)
         }
+        function get-val([string]$val) {
+            if ($NoTrim) {
+                $val
+            } else {
+                $val.Trim()
+            }
+        }
     }
     process {
         [int] $len = $Path.Length
@@ -60,11 +67,7 @@ function Get-PathEnv {
                     throw "Malformed text"
                 }
                 [string] $val = $Path.Substring($current + 1, $end - $current - 1)
-                if ($NoTrim) {
-                    $val
-                } else {
-                    $val.Trim()
-                }
+                get-val $val
                 $current = $end + 2
             } else {
                 $end = $Path.IndexOf([char] ';', $current + 1)
@@ -72,11 +75,7 @@ function Get-PathEnv {
                     $end = $len
                 }
                 [string] $val = $Path.Substring($current, $end - $current).Trim()
-                if ($NoTrim) {
-                    $val
-                } else {
-                    $val.Trim()
-                }
+                get-val $val
                 $current = $end + 1
             }
         }
