@@ -7,8 +7,10 @@
     The environment (Machine, Process, User) whose path variable you wish to inspect.
 .PARAMETER Path
     The string whom you wish to split into its component paths.
+.PARAMETER NoTrim
+    If set, do not trim returned values.
 .NOTES
-    This will automatically trim paths returned. If used with Path as opposed to Target, environment variables will not be replaced by their corresponding values in returned results, e.g. it will not replace %TMP% with "C:\Users\$($env:UserName)\AppData\Local\Temp".
+    This will automatically trim paths returned unless NoTrim is set. If used with Path as opposed to Target, environment variables will not be replaced by their corresponding values in returned results, e.g. it will not replace %TMP% with "C:\Users\$($env:UserName)\AppData\Local\Temp".
 .EXAMPLE
     Get-PathEnv -Path 'C:\temp; D:\git'
 .EXAMPLE
@@ -32,15 +34,16 @@
 #>
 function Get-PathEnv {
     [CmdletBinding(DefaultParameterSetName = 'Target')]
-    [OutputType([String[]])]
     Param (
         [Parameter(Mandatory = $false, ParameterSetName = 'Target', Position = 0)]
         [Alias('Target')]
         [System.EnvironmentVariableTarget] $EnvTarget = [System.EnvironmentVariableTarget]::Process,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'Path', ValueFromPipeline = $true)]
-        [string] $Path
+        [string] $Path,
 
+        [Parameter(Mandatory = $false)]
+        [switch] $NoTrim
     )
     begin {
         if ($PSCmdlet.ParameterSetName -eq 'Target') {
@@ -56,14 +59,24 @@ function Get-PathEnv {
                 if ($end -eq -1 -or ($end -lt $len - 1 -and $Path[$end + 1] -ne ';')) {
                     throw "Malformed text"
                 }
-                $Path.Substring($current + 1, $end - $current - 1).Trim()
+                [string] $val = $Path.Substring($current + 1, $end - $current - 1)
+                if ($NoTrim) {
+                    $val
+                } else {
+                    $val.Trim()
+                }
                 $current = $end + 2
             } else {
                 $end = $Path.IndexOf([char] ';', $current + 1)
                 if ($end -eq -1) {
                     $end = $len
                 }
-                $Path.Substring($current, $end - $current).Trim()
+                [string] $val = $Path.Substring($current, $end - $current).Trim()
+                if ($NoTrim) {
+                    $val
+                } else {
+                    $val.Trim()
+                }
                 $current = $end + 1
             }
         }
