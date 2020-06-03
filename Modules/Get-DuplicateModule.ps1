@@ -4,7 +4,7 @@ function Get-DuplicateModule {
         Get the modules for which there are multiple versions installed.
     .DESCRIPTION
         Get the modules for which there are multiple versions installed.
-    .PARAMETER All
+    .PARAMETER AllLocations
         If set, check modules in all folders in $env:PSModulePath. Else, it only looks in Current User
         and All Users specific folders.
     .EXAMPLE
@@ -13,7 +13,8 @@ function Get-DuplicateModule {
         Get-DuplicateModule -All
     #>
     param (
-        [switch] $All
+        [Alias('All')]
+        [switch] $AllLocations
     )
 
     $inUse = Get-Module | Select-Object Name, Version
@@ -32,7 +33,7 @@ function Get-DuplicateModule {
     $prefix = if ($PSVersionTable.PSVersion.Major -lt 6) { 'Windows' }
     $allowedPaths = "$Home\Documents\$($prefix)PowerShell\Modules", "$Env:ProgramFiles\$($prefix)PowerShell\Modules"
 
-    function is-ok([string] $Path) {
+    function test-ok([string] $Path) {
         $result = $false
         foreach ($modPath in $allowedPaths) {
             if ($Path.StartsWith($modPath)) {
@@ -44,7 +45,7 @@ function Get-DuplicateModule {
     }
 
     Get-Module -ListAvailable |
-    Where-Object {$All -or (is-ok $_.Path)} |
+    Where-Object {$AllLocations -or (test-ok $_.Path)} |
     Select-Object Name, Version, Path |
     Sort-Object Name, Version -Descending |
     Group-Object Name |
