@@ -22,7 +22,7 @@ function Import-DataTable {
         System.String
         You can pipe the path of a file to Import-DataTable.
     .NOTES
-        Idea based on code in URL in Link section.
+        Idea based on code in URL in Link section. If a field has an end-of-line character in its value, this will not parse the file correctly!
     .LINK
         https://blog.netnerds.net/2015/02/working-with-basic-net-datasets-in-powershell/
     #>
