@@ -33,13 +33,14 @@ function Format-Xml {
     .PARAMETER OmitXmlDeclaration
         Indicates whether to omit an XML declaration. Defaults to false.
     .EXAMPLE
-        Format-Xml -LiteralPath 'c:\git\test\test.csproj'
+        $settings = New-XmlWriterSettings -OmitXmlDeclaration
+        Format-Xml -LiteralPath 'c:\git\test\test.csproj' -Settings $settings
     .LINK
         https://docs.microsoft.com/en-us/dotnet/api/system.xml.xmlwritersettings?view=netcore-3.1
     #>
     param
     (
-        [ValidateScript( { Validate-LiteralPath Leaf })]
+        [ValidatePathExists()]
         [Parameter(ParameterSetName = "LiteralPath", Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [Alias('PSPath', 'FullName')]
         [string] $LiteralPath,

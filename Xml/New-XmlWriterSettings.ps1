@@ -1,3 +1,5 @@
+using namespace System.Xml
+
 function New-XmlWriterSettings {
     <#
     .SYNOPSIS
@@ -36,7 +38,7 @@ function New-XmlWriterSettings {
         [Alias('cc')]
         [bool] $CheckCharacters = $true,
 
-        [Xml.ConformanceLevel] $ConformanceLevel = [Xml.ConformanceLevel]::Document,
+        [ConformanceLevel] $ConformanceLevel = [ConformanceLevel]::Document,
 
         [Alias('DoNotEscape', 'NoEscape')]
         [switch] $DoNotEscapeUriAttributes,
@@ -47,21 +49,21 @@ function New-XmlWriterSettings {
         [string] $IndentChars = '  ',
 
         [Alias('nsh')]
-        [System.Xml.NamespaceHandling] $NamespaceHandling = [System.Xml.NamespaceHandling]::Default,
+        [NamespaceHandling] $NamespaceHandling = [NamespaceHandling]::Default,
 
         [Alias('nlc')]
         [string] $NewLineChars = "`r`n",
 
         [Alias('nlh')]
-        [System.Xml.NewLineHandling] $NewLineHandling = [System.Xml.NewLineHandling]::Replace,
+        [NewLineHandling] $NewLineHandling = [NewLineHandling]::Replace,
 
         [Alias('nloa')]
         [switch] $NewLineOnAttributes,
 
-        [Alias('oxd', 'omitdec')]
+        [Alias('oxd', 'omit')]
         [switch] $OmitXmlDeclaration
     )
     $params = Get-ParameterValue $MyInvocation.MyCommand
     $params.Add('CloseOutput', $true)
-    New-Object System.Xml.XmlWriterSettings -Property $params
+    New-Object -TypeName 'System.Xml.XmlWriterSettings' -Property $params
 }
