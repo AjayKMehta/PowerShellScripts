@@ -16,7 +16,7 @@ function Test-Type {
         $null = ([Type]$Type).Name
         return $true
     } catch {
-        Write-Verbose "$Type is not loaded"
+        Write-Debug "$Type is not loaded"
         return $false
     }
 }

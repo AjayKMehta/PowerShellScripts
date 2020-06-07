@@ -29,7 +29,7 @@ function Get-PathEnv {
         D:\temp\test;
         %AppData%\code
 
-        Notice how this does not replaces %AppData% with its value!
+        Notice how this does not replace %AppData% with its actual value!
     .EXAMPLE
         Get-PathEnv 'Machine' | Out-File C:\temp\path-test.txt -Encoding UTF8
     #>

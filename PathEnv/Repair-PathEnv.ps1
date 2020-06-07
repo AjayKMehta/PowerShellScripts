@@ -78,5 +78,4 @@ function Repair-PathEnv {
     } else {
         $res
     }
-
 }
