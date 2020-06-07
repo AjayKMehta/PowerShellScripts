@@ -33,6 +33,7 @@ function New-XmlWriterSettings {
     .EXAMPLE
         $settings = New-XmlWriterSettings -OmitXmlDeclaration
     #>
+    [CmdletBinding(PositionalBinding = $false)]
     param
     (
         [Alias('cc')]

@@ -9,16 +9,18 @@ filter ConvertTo-Binary {
     .EXAMPLE
         '\u10A', '\u005C' | ConvertTo-Binary -Encoding ([System.Text.Encoding]::Unicode)
     .EXAMPLE
-        ConvertTo-Binary 'hello'
+        ConvertTo-Binary -InputString 'hello'
     .LINK
         http://stackoverflow.com/questions/6285722/c-sharp-binary-to-string?lq=1
     #>
     [OutputType([string])]
+    [CmdletBinding(PositionalBinding = $false)]
     param
     (
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [string] $InputString,
 
+        [Parameter(Mandatory = $false, Position = 0)]
         [System.Text.Encoding] $Encoding = [System.Text.Encoding]::Default
     )
     # 8 bc 1 byte = 8 bits.

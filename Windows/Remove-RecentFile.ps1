@@ -10,7 +10,7 @@ function Remove-RecentFile {
     .EXAMPLE
         Remove-RecentFile -WhatIf -MinDate '5/31/2020'
     #>
-    [CmdletBinding(DefaultParameterSetName = 'Default', SupportsShouldProcess = $True, ConfirmImpact = 'High')]
+    [CmdletBinding(DefaultParameterSetName = 'Default', PositionalBinding = $false, SupportsShouldProcess = $True, ConfirmImpact = 'High')]
     param
     (
         [switch] $Force,

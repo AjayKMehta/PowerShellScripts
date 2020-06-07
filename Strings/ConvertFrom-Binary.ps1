@@ -7,7 +7,7 @@ filter ConvertFrom-Binary {
     .PARAMETER InputString
         The string you want to convert from binary. Can take input from pipeline.
     .EXAMPLE
-        $s = ConvertTo-Binary 'hello' -Encoding ([System.Text.Encoding]::Unicode)
+        $s = ConvertTo-Binary -InputString 'hello' -Encoding ([System.Text.Encoding]::Unicode)
         ConvertFrom-Binary $s -Encoding ([System.Text.Encoding]::Unicode)
     .EXAMPLE
         'p' | ConvertTo-Binary -Encoding ([System.Text.Encoding]::Unicode) | ConvertFrom-Binary -Encoding ([System.Text.Encoding]::Unicode)
@@ -18,13 +18,15 @@ filter ConvertFrom-Binary {
         'Δ' | ConvertTo-Binary -Encoding ([System.Text.Encoding]::Unicode) | ConvertFrom-Binary -Encoding ([System.Text.Encoding]::ASCII)
     #>
     [OutputType([string])]
+    [CmdletBinding(PositionalBinding = $false)]
     param
     (
         [ValidateNotNull()]
-        [ValidateScript( { ($_.length % 8) -eq 0 })]
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [ValidateScript( { ($_.Length % 8) -eq 0 })]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [string] $InputString,
 
+        [Parameter(Mandatory = $false, Position = 0)]
         [System.Text.Encoding] $Encoding = [System.Text.Encoding]::Default
     )
     # 8 bc 1 byte = 8 bits.

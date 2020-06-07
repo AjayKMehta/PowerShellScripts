@@ -38,6 +38,7 @@ function Format-Xml {
     .LINK
         https://docs.microsoft.com/en-us/dotnet/api/system.xml.xmlwritersettings?view=netcore-3.1
     #>
+    [CmdletBinding(DefaultParameterSetName = "LiteralPath", PositionalBinding = $false)]
     param
     (
         [ValidatePathExists()]
