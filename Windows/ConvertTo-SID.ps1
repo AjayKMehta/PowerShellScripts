@@ -1,3 +1,4 @@
+using namespace System.Security.Principal
 
 filter ConvertTo-SID
 {
@@ -24,8 +25,8 @@ filter ConvertTo-SID
     {
         try
         {
-            $account = New-Object System.Security.Principal.NTAccount($id)
-            $name = ($account.Translate([System.Security.Principal.SecurityIdentifier]) ).Value
+            $account = [NTAccount]::new($id)
+            $name = ($account.Translate([SecurityIdentifier]) ).Value
         }
         catch
         {

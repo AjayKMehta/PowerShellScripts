@@ -1,3 +1,5 @@
+using namespace System.Management.Automation
+
 function Get-DynamicParameter {
     <#
     .SYNOPSIS
@@ -17,8 +19,9 @@ function Get-DynamicParameter {
     param
     (
         [Parameter(ParameterSetName = 'Command', Mandatory = $true, ValueFromPipeline = $true)]
-        [System.Management.Automation.CommandInfo[]] $Command,
+        [CommandInfo[]] $Command,
 
+        [SupportsWildcards()]
         [Parameter(ParameterSetName = 'Default', Mandatory = $true, Position = 0)]
         [string] $CommandName
     )
