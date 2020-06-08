@@ -33,7 +33,7 @@ function Get-PathEnv {
     .EXAMPLE
         Get-PathEnv 'Machine' | Out-File C:\temp\path-test.txt -Encoding UTF8
     #>
-    [CmdletBinding(DefaultParameterSetName = 'Target')]
+    [CmdletBinding(DefaultParameterSetName = 'Target', PositionalBinding = $false)]
     Param (
         [Parameter(Mandatory = $false, ParameterSetName = 'Target', Position = 0)]
         [Alias('Target')]

@@ -24,7 +24,7 @@ function Get-DefaultParameterValue {
     .EXAMPLE
         Get-DefaultParameterValue -Command (Get-Command Get-Variable)
     #>
-    [Cmdletbinding(DefaultParameterSetName = 'ScriptBlock')]
+    [Cmdletbinding(DefaultParameterSetName = 'ScriptBlock', PositionalBinding = $false)]
     param
     (
         [ValidateNotNull()]

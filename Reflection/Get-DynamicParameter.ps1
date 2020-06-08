@@ -13,7 +13,7 @@ function Get-DynamicParameter {
     .EXAMPLE
         Get-DynamicParameter Get-C*
     #>
-    [Cmdletbinding(DefaultParameterSetName = 'Default')]
+    [Cmdletbinding(DefaultParameterSetName = 'Default', PositionalBinding = $false)]
     param
     (
         [Parameter(ParameterSetName = 'Command', Mandatory = $true, ValueFromPipeline = $true)]

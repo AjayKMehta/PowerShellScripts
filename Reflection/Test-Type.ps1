@@ -11,12 +11,13 @@ function Test-Type {
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [String] $Type
     )
-
-    try {
-        $null = ([Type]$Type).Name
-        return $true
-    } catch {
-        Write-Debug "$Type is not loaded"
-        return $false
+    process {
+        try {
+            $null = ([Type]$Type).Name
+            return $true
+        } catch {
+            Write-Debug "$Type is not loaded"
+            return $false
+        }
     }
 }

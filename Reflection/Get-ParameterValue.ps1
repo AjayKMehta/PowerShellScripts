@@ -40,7 +40,7 @@ function Get-ParameterValue {
         foo2 -ErrorAction SilentlyContinue
         foo2 -X "A"
     #>
-    [Cmdletbinding(DefaultParameterSetName = 'Filter')]
+    [Cmdletbinding(DefaultParameterSetName = 'Filter', PositionalBinding = $false)]
     param
     (
         [Parameter(Mandatory = $true, Position = 0)]

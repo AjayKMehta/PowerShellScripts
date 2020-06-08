@@ -19,5 +19,5 @@ filter Get-OutputType {
         [scriptblock] $ScriptBlock
     )
     $outputType = $ScriptBlock.Attributes.Where({ $_.TypeId.Name -eq 'OutputTypeAttribute' })
-    if ($null -ne $outputType) { $outputType.Type.Name }
+    if ($outputType) { $outputType.Type.Name }
 }
