@@ -9,7 +9,7 @@ function New-Wrapper {
         Name of new function to create.
     .PARAMETER Type
         Type of .NET object to create.
-    .PARAMETER Choose
+    .PARAMETER ChooseProperties
         If specified, prompt the user to select properties.
     .PARAMETER AddOutputType
         If specified, add OutputType attribute to created function.
@@ -27,7 +27,7 @@ function New-Wrapper {
         [Parameter(Mandatory, Position = 1)]
         [Type] $Type,
 
-        [Switch] $Choose,
+        [Switch] $ChooseProperties,
         [switch] $OutputType,
         [switch] $UseSwitch
     )
@@ -41,7 +41,7 @@ function New-Wrapper {
 
     $properties = $Type.GetProperties().Where( { $_.SetMethod -and $_.CanWrite }) | Select-Object Name, PropertyType
 
-    if ($Choose) {
+    if ($ChooseProperties) {
         $properties = $properties | Out-GridView -PassThru -Title 'Select properties'
     }
 
