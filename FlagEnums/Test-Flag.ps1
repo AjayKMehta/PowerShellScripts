@@ -22,16 +22,17 @@ function Test-Flag {
         Test-Flag $regex.Options $values All
         Test-Flag $regex.Options $values Any
     #>
+    [CmdletBinding(PositionalBinding = $false)]
     param
     (
         [ValidateScript( { Test-FlagEnum ($_.GetType()) })]
-        [Parameter(Mandatory, Position = 0)]
+        [Parameter(Mandatory = $true, Position = 0)]
         $EnumValue,
-        [Parameter(Mandatory, Position = 1)]
+        [Parameter(Mandatory = $true, Position = 1)]
         $Values,
         [ValidateSet('Any', 'All')]
-        [Parameter(Mandatory, Position = 2)]
-        $Check
+        [Parameter(Mandatory = $true, Position = 2)]
+        [string] $Check
     )
 
     [Type] $enumType = $EnumValue.GetType()

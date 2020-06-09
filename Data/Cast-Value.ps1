@@ -29,7 +29,7 @@ function Cast-Value {
         $test | ConvertFrom-Csv | Cast-Value @{a=[int]} -ea SilentlyContinue -ErrorVariable e
         $e.Exception.Data # This has detailed error info
     #>
-    [Cmdletbinding()]
+    [Cmdletbinding(PositionalBinding = $false)]
     param
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]

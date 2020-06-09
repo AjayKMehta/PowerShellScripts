@@ -21,9 +21,9 @@ function Remove-EmptyDirectory {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
+        [SupportsWildcards()]
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [Alias('PSPath')]
-        [SupportsWildcards()]
         [string[]] $Path,
         [string] $Filter,
         [switch] $Recurse,
@@ -39,6 +39,7 @@ function Remove-EmptyDirectory {
         $null = $PsBoundParameters.Remove("Path")
         Get-ChildItem -Path $Path -Directory -Recurse:$Recurse -Filter $Filter -Force:$Force |
         Where-Object { $_.GetFiles().Count -eq 0 } |
+        # Delete in bottom-up order to avoid issues
         Sort-Object @{Expression = { $_.FullName.Length }; Descending = $true } |
         ForEach-Object {
             $folder = $_.FullName
