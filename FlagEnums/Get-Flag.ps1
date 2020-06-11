@@ -1,4 +1,4 @@
-filter Get-Flag {
+function Get-Flag {
     <#
     .SYNOPSIS
         Returns all bit fields that are set for EnumValue.
@@ -31,35 +31,37 @@ filter Get-Flag {
         [switch] $ShowAll,
         [switch] $ExcludeCompound
     )
+    begin {
+        # Compound values are not 2^n.
+        $filter = { $_ -ne 0 -and $EnumValue.HasFlag($_) -and (!$ExcludeCompound -or (Test-Integer ([Math]::Log($_, 2)))) }
+    }
 
-    [Type] $enumType = $EnumValue.GetType()
+    process {
+        [Type] $enumType = $EnumValue.GetType()
 
-    if ($EnumValue -eq 0) {
-        $EnumValue
-    } else {
-        $values = $enumType.GetEnumValues() | Select-Object -Unique
-        if ($ShowAll) {
-            $result = $values | Where-Object { $_ -ne 0 -and $EnumValue.HasFlag($_) }
-            if ($ExcludeCompound) {
-                # Don't want to get compound values. Hence, check for powers of 2!!!
-                $result = $result | Where-Object { Test-Integer ([Math]::Log($_, 2)) }
-            }
+        if ($EnumValue -eq 0) {
+            $EnumValue
         } else {
-            $result = @()
-            [int] $check = [int] $EnumValue
-            $eValue = $EnumValue
-            $values = $values | Sort-Object -Descending
-            foreach ($value in $values) {
-                if ($eValue -eq $value -or $eValue.HasFlag($value)) {
-                    $result += $value
-                    $check -= [int] $value;
-                    if ($check -eq 0) {
-                        break;
+            $values = $enumType.GetEnumValues() | Select-Object -Unique
+            if ($ShowAll) {
+                $result = $values | Where-Object $filter
+            } else {
+                $result = @()
+                [int] $check = [int] $EnumValue
+                $eValue = $EnumValue
+                $values = $values | Sort-Object -Descending
+                foreach ($value in $values) {
+                    if ($eValue -eq $value -or $eValue.HasFlag($value)) {
+                        $result += $value
+                        $check -= [int] $value
+                        if ($check -eq 0) {
+                            break
+                        }
+                        $eValue = [Enum]::ToObject($enumType, $check)
                     }
-                    $eValue = [Enum]::ToObject($enumType, $check)
                 }
             }
+            $result
         }
-        $result
     }
 }
