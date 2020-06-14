@@ -1,4 +1,5 @@
 using namespace System.Collections.Generic
+
 function Repair-PathEnv {
     <#
     .SYNOPSIS
@@ -9,22 +10,14 @@ function Repair-PathEnv {
         Trims whitespace from existing paths.
     .PARAMETER Target
         The environment (Machine, Process, User) whose path variable you wish to repair.
-    .NOTES
-        Since this is a potentially dangerous operation and the cmdlet has no risk mitigation
-        parameters, it is recommended you first use the parameter set that takes a string as input
-        to make sure you are comfortable with the expected results:
-
-        $null = [System.Environment]::GetEnvironmentVariable('Path') | Repair-PathEnv -Verbose
-        # If OK, go ahead:
-        Repair-PathEnv -Target Process -Verbose
-    .EXAMPLE
-        Repair-PathEnv 'Machine'
+  .EXAMPLE
+        Repair-PathEnv 'Machine' -WhatIf
     .EXAMPLE
         Repair-PathEnv -Path 'C:\Bogus;C:\temp;C:\temp;D:\git'
     .EXAMPLE
-        'C:\Bogus;C:\temp;C:\temp;D:\git', 'D:\temp;D:\git2' | Repair-PathEnv
+        'C:\Bogus;C:\temp;C:\temp;D:\git', 'D:\temp;D:\git2' | Repair-PathEnv -Confirm -Verbose
     #>
-    [CmdletBinding(DefaultParameterSetName = 'Target', PositionalBinding = $false)]
+    [CmdletBinding(DefaultParameterSetName = 'Target', PositionalBinding = $false, SupportsShouldProcess = $true)]
     Param (
         [Parameter(Mandatory = $false, ParameterSetName = 'Target', Position = 0)]
         [Alias('Target')]
@@ -40,13 +33,15 @@ function Repair-PathEnv {
     }
     process {
         [HashSet[string]] $paths = [HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+        [List[string]] $badPaths = [List[string]]::new()
         [int] $len = $Path.Length
         [int] $current = 0
-        [bool] $modify = $false
         [string] $val = $null;
         [string] $pathToCheck = $null;
         while ($current -lt $len - 1) {
+            # Escaped entry
             if ($Path[$current] -eq '"') {
+                # Find closing double quote
                 $end = $Path.IndexOf([char] '"', $current + 1)
                 if ($end -eq -1 -or ($end -lt $len - 1 -and $Path[$end + 1] -ne ';')) {
                     throw "Malformed text"
@@ -66,21 +61,23 @@ function Repair-PathEnv {
                 $current = $end + 1
             }
             if (!(Test-Path -LiteralPath $pathToCheck)) {
-                Write-Verbose "Remove non-existent path $pathToCheck"
-                $modify = $true
+                Write-Verbose "Found non-existent path $pathToCheck"
+                $null = $badPaths.Add($pathToCheck)
             } elseif (!$paths.Add($val)) {
-                Write-Verbose "Remove duplicate path $val"
-                $modify = $true
+                Write-Verbose "Found duplicate path $pathToCheck"
+                $null = $badPaths.Add($pathToCheck)
             }
         }
 
         $res = $paths -join ';'
-        if ($PSCmdlet.ParameterSetName -eq 'Target') {
-            if ($modify) {
+        if (($badPaths.Count -gt 0) -and $PSCmdlet.ShouldProcess($badPaths -join ',', 'Remove')) {
+            if ($PSCmdlet.ParameterSetName -eq 'Target') {
                 [Environment]::SetEnvironmentVariable('PATH', $res, $EnvTarget)
+            } else {
+                $res
             }
-        } else {
-            $res
+        } elseif ($PSCmdlet.ParameterSetName -eq 'Path') {
+            $Path
         }
     }
 }
