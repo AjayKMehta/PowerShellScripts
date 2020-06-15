@@ -27,11 +27,13 @@ function Repair-PathEnv {
         [string] $Path
     )
     begin {
-        if ($PSCmdlet.ParameterSetName -eq 'Target') {
+        [bool] $useTarget = $PSCmdlet.ParameterSetName -eq 'Target'
+        if ($useTarget) {
             $Path = [System.Environment]::GetEnvironmentVariable('PATH', $EnvTarget)
         }
     }
     process {
+        # Filesystem paths are case-insensitive on Windows.
         [HashSet[string]] $paths = [HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
         [List[string]] $badPaths = [List[string]]::new()
         [int] $len = $Path.Length
@@ -71,12 +73,12 @@ function Repair-PathEnv {
 
         $res = $paths -join ';'
         if (($badPaths.Count -gt 0) -and $PSCmdlet.ShouldProcess($badPaths -join ',', 'Remove')) {
-            if ($PSCmdlet.ParameterSetName -eq 'Target') {
+            if ($useTarget) {
                 [Environment]::SetEnvironmentVariable('PATH', $res, $EnvTarget)
             } else {
                 $res
             }
-        } elseif ($PSCmdlet.ParameterSetName -eq 'Path') {
+        } elseif (!$useTarget) {
             $Path
         }
     }
