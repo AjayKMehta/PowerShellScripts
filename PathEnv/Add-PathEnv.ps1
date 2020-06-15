@@ -30,7 +30,7 @@ function Add-PathEnv {
 
         [ValidatePathExists(PathType = 'Container')]
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [string] $NewEntry,
+        [string[]] $NewEntry,
 
         [Parameter(Mandatory = $false)]
         [switch] $Unique,
@@ -60,16 +60,18 @@ function Add-PathEnv {
         [bool] $modify = $false
     }
     process {
-        if ((!$Unique -or !$Paths.Contains($NewEntry)) -and $PSCmdlet.ShouldProcess($NewEntry, 'Add')) {
-            $modify = $true
-            $entry = $NewEntry
-            if ($NewEntry.Contains([char]';')) {
-                $entry = """$NewEntry"""
-            }
-            if ($Prepend) {
-                $null = $sb.Append("$entry;")
-            } else {
-                $null = $sb.Append(";$entry")
+        foreach ($item in $NewEntry) {
+            if ((!$Unique -or !$Paths.Contains($item)) -and $PSCmdlet.ShouldProcess($item, 'Add')) {
+                $modify = $true
+                $entry = $item
+                if ($entry.Contains([char]';')) {
+                    $entry = """$entry"""
+                }
+                if ($Prepend) {
+                    $null = $sb.Append("$entry;")
+                } else {
+                    $null = $sb.Append(";$entry")
+                }
             }
         }
     }
