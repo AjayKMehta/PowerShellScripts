@@ -1,4 +1,5 @@
 using namespace System.Text
+
 function Add-PathEnv {
     <#
     .SYNOPSIS
@@ -18,7 +19,7 @@ function Add-PathEnv {
     .EXAMPLE
         'C:\temp', 'D:\git', 'D:\temp' | Add-PathEnv 'C:\,%AppData%'
     #>
-    [CmdletBinding(DefaultParameterSetName = 'Target', PositionalBinding = $false)]
+    [CmdletBinding(DefaultParameterSetName = 'Target', PositionalBinding = $false, SupportsShouldProcess = $true)]
     Param (
         [Parameter(Mandatory = $false, ParameterSetName = 'Target', Position = 0)]
         [Alias('Target')]
@@ -59,16 +60,16 @@ function Add-PathEnv {
         [bool] $modify = $false
     }
     process {
-        if (!$Unique -or !$Paths.Contains($NewEntry)) {
+        if ((!$Unique -or !$Paths.Contains($NewEntry)) -and $PSCmdlet.ShouldProcess($NewEntry, 'Add')) {
             $modify = $true
             $entry = $NewEntry
             if ($NewEntry.Contains([char]';')) {
-                Entry = """$NewEntry"""
+                $entry = """$NewEntry"""
             }
             if ($Prepend) {
-                $null = $sb.Append("$Entry;")
+                $null = $sb.Append("$entry;")
             } else {
-                $null = $sb.Append(";$Entry")
+                $null = $sb.Append(";$entry")
             }
         }
     }
@@ -77,10 +78,14 @@ function Add-PathEnv {
             $null = $sb.Append($Path)
         }
         $result = $sb.ToString()
-        if ($useTarget -and $modify) {
-            $Path = [System.Environment]::SetEnvironmentVariable('PATH', $result, $EnvTarget)
-        } else {
-            $result
+        if ($modify) {
+            if ($useTarget) {
+                [Environment]::SetEnvironmentVariable('PATH', $result, $EnvTarget)
+            } else {
+                $result
+            }
+        } elseif (!$useTarget) {
+            $Path
         }
     }
 }
