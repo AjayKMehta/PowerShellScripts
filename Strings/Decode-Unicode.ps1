@@ -21,7 +21,7 @@ function Decode-Unicode {
     param
     (
         [AllowNull()]
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         $InputObject
     )
 

@@ -45,7 +45,7 @@ filter Get-Namespace {
                 </e:Envelope>
         '@)
 
-        Get-Namespace -XNode $xDoc
+        Get-Namespace $xDoc
     .LINK
         http://stackoverflow.com/questions/767541/how-i-can-list-out-all-the-namespace-in-xml
     #>
@@ -54,15 +54,15 @@ filter Get-Namespace {
     param
     (
         [ValidateNotNull()]
-        [Parameter(Mandatory = $true, ParameterSetName = 'Node', ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Node', Position = 0, ValueFromPipeline = $true)]
         [System.Xml.XmlNode] $Node,
 
         [ValidateNotNull()]
-        [Parameter(Mandatory = $true, ParameterSetName = 'XNode', ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'XNode', Position = 0, ValueFromPipeline = $true)]
         [System.Xml.Linq.XNode] $XNode,
 
         [ValidateNotNullorEmpty()]
-        [Parameter(Mandatory = $false, Position = 0)]
+        [Parameter(Mandatory = $false, Position = 1)]
         [Alias('Prefix')]
         [string] $DefaultPrefix = 'ns',
 

@@ -9,10 +9,13 @@ function Format-Xml {
     .PARAMETER Xml
         XML Document
     .PARAMETER Settings
-        Object ot type System.Xml.XmlWriterSettings.
+        Object of type System.Xml.XmlWriterSettings.
     .EXAMPLE
         $settings = New-XmlWriterSettings -OmitXmlDeclaration
         Format-Xml -LiteralPath 'c:\git\test\test.csproj' -Settings $settings
+    .EXAMPLE
+        $settings = New-XmlWriterSettings -OmitXmlDeclaration
+        'c:\git\test\test.csproj' | Format-Xml -Settings $settings
     .LINK
         https://docs.microsoft.com/en-us/dotnet/api/system.xml.xmlwritersettings?view=netcore-3.1
     #>
@@ -20,14 +23,14 @@ function Format-Xml {
     param
     (
         [ValidatePathExists()]
-        [Parameter(ParameterSetName = "LiteralPath", Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = "LiteralPath", Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [Alias('PSPath', 'FullName')]
         [string] $LiteralPath,
 
         [Parameter(ParameterSetName = "XML", Mandatory = $true, Position = 0 )]
         [XML] $Xml,
 
-        [Parameter(ParameterSetName = "LiteralPath", Mandatory = $true, Position = 0)]
+        [Parameter(ParameterSetName = "LiteralPath", Mandatory = $true, Position = 1)]
         [Parameter(ParameterSetName = "XML", Mandatory = $true, Position = 1)]
         [System.Xml.XmlWriterSettings] $Settings
 

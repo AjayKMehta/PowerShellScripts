@@ -26,7 +26,7 @@ function Import-DataTable {
     .LINK
         https://blog.netnerds.net/2015/02/working-with-basic-net-datasets-in-powershell/
     #>
-    [CmdletBinding(DefaultParameterSetName = 'Default')]
+    [CmdletBinding(DefaultParameterSetName = 'Default', PositionalBinding = $false)]
     [OutputType([System.Data.DataTable])]
     param
     (

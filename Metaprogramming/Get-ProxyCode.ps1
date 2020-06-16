@@ -9,7 +9,7 @@ function Get-ProxyCode {
     .EXAMPLE
         Get-ProxyCode (gcm gci)
     .EXAMPLE
-        gcm sls | gpc
+        gcm sls | Get-ProxyCode
     #>
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param
@@ -18,7 +18,7 @@ function Get-ProxyCode {
         [System.String]
         $Name,
 
-        [Parameter(Mandatory = $true, ParameterSetName = 'Command', ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Command', Position = 0, ValueFromPipeline = $true)]
         [CommandInfo]
         $Command
     )

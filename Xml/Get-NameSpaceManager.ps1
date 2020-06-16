@@ -28,18 +28,21 @@ filter Get-NamespaceManager {
 
         $nsm = Get-NamespaceManager $xmlDoc -Verbose
         $nsm.GetEnumerator() | % { $_,$nsm.LookupNamespace($_) }
+    .EXAMPLE
+        # This uses same $xmlDoc as previous example.
+        $xmlDoc | Get-NameSpaceManager -Prefix 'ns'
     #>
     [OutputType([Xml.XmlNamespaceManager])]
     [Cmdletbinding()]
     param
     (
         [ValidateNotNull()]
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [Alias('Xml')]
         [Xml] $XmlDocument,
 
         [ValidateNotNullorEmpty()]
-        [Parameter(Mandatory = $false, Position = 0)]
+        [Parameter(Mandatory = $false, Position = 1)]
         [Alias('Prefix')]
         [string] $DefaultPrefix = 'ns',
 

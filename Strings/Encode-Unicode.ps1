@@ -20,7 +20,7 @@ filter Encode-Unicode {
     param
     (
         [AllowNull()]
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         # Do not specify as String as PS will coerce $null to String.Empty!
         $InputObject
     )

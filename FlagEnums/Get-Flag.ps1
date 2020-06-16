@@ -54,7 +54,7 @@ function Get-Flag {
         $EnumValue,
 
         [ValidateSet('All', 'Compound', 'NoCompound')]
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $false, Position = 1)]
         [string] $Show = 'Compound'
     )
     process {

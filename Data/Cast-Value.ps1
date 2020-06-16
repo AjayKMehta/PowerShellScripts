@@ -23,7 +23,7 @@ function Cast-Value {
         $test | ConvertFrom-Csv | Cast-Value @{a=[int]}
     .EXAMPLE
         # Uses $test from first example. Value is 0 when cast to [int] fails.
-        $test | ConvertFrom-Csv | Cast-Values @{a=[int]} -UseDefaults
+        $test | ConvertFrom-Csv | Cast-Value @{a=[int]} -UseDefaults
     .EXAMPLE
         # Uses $test from first example.
         $test | ConvertFrom-Csv | Cast-Value @{a=[int]} -ea SilentlyContinue -ErrorVariable e
@@ -35,6 +35,7 @@ function Cast-Value {
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [psobject] $InputObject,
         [Parameter(Mandatory = $true, Position = 0)]
+        [Alias('Map', 'TypeMap')]
         [hashtable] $PropertyTypeMap,
         [switch] $UseDefaults
     )

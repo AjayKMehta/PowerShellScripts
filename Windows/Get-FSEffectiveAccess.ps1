@@ -27,7 +27,7 @@ function Get-FSEffectiveAccess {
         [SupportsWildCards()]
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [string] $Path,
-        [Parameter(Position = 0)]
+        [Parameter(Mandatory = $false, Position = 0)]
         [System.Security.Principal.WindowsPrincipal] $Principal = (Get-CurrentUser),
         [switch] $AsHashTable,
         [switch] $NoCompound
