@@ -9,6 +9,8 @@ function Decode-Unicode {
         The string whose Unicode escape sequences you wish to convert to Unicode characters. Can take input from pipeline.
     .NOTES
         Not tested thoroughly. Use with caution!
+    .OUTPUTS
+        System.String
     .EXAMPLE
         '\u10A','\U10A','\u005A', $null | Decode-Unicode
     .EXAMPLE

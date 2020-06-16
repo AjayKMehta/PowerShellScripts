@@ -8,6 +8,8 @@ filter Encode-Unicode {
         The string whose Unicode characters you wish to convert to Unicode escape sequences. Can take input from pipeline.
     .NOTES
         Not tested thoroughly. Use with caution!
+    .OUTPUTS
+        System.String
     .EXAMPLE
         '\u10A','\U10A','\u005A' | Decode-Unicode | Encode-Unicode
     .EXAMPLE
