@@ -16,9 +16,11 @@ function Remove-RecentFile {
         [switch] $Force,
 
         [Parameter(ParameterSetName = 'Default')]
+        #If set, delete all shortcuts.
         [switch] $All,
 
         [Parameter(ParameterSetName = 'Date')]
+        #If MinDate is specified, it will delete all links older than MinDate.
         [datetime]$MinDate
     )
 

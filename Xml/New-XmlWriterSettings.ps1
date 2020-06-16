@@ -30,10 +30,13 @@ function New-XmlWriterSettings {
         If set, write attributes on a new line.
     .PARAMETER OmitXmlDeclaration
         If set, omit an XML declaration.
+    .OUTPUTS
+        System.Xml.XmlWriterSettings
     .EXAMPLE
         $settings = New-XmlWriterSettings -OmitXmlDeclaration
     #>
     [CmdletBinding(PositionalBinding = $false)]
+    [OutputType([System.Xml.XmlWriterSettings])]
     param
     (
         [Alias('cc')]

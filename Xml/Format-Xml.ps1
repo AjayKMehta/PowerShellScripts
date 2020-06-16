@@ -10,6 +10,8 @@ function Format-Xml {
         XML Document
     .PARAMETER Settings
         Object of type System.Xml.XmlWriterSettings.
+    .OUTPUTS
+        None,
     .EXAMPLE
         $settings = New-XmlWriterSettings -OmitXmlDeclaration
         Format-Xml -LiteralPath 'c:\git\test\test.csproj' -Settings $settings

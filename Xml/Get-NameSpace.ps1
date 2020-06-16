@@ -14,6 +14,8 @@ filter Get-Namespace {
         Prefix for default namespace(s). Also, used for cases where duplicate prefixes pointing to different namespaces. Defaults to 'ns'.
     .PARAMETER Unique
         If set, do not add multiple prefixes for same namespace.
+    .OUTPUTS
+        System.Collections.Generic.Dictionary[string, string]
     .EXAMPLE
         [xml](cat D:\git\*\*.csproj) | Get-NameSpace
     .EXAMPLE
