@@ -16,6 +16,9 @@ function Get-FSEffectiveAccess {
         If specified, result is a hashtable with key = FileSystemRights and value = boolean indicating whether a right is allowed or denied.
     .PARAMETER NoCompound
         If set, compound FileSystemRights will get broken down into their underlying values.
+    .OUTPUTS
+        PSCustomObject[] with properties AccessControlType, FileSystemRights, IsInherited
+        If AsHashTable is set, System.Collections.Hashtable.
     .NOTES
         This needs to be tested more rigorously. Use at your own risk!
     .EXAMPLE
@@ -34,14 +37,15 @@ function Get-FSEffectiveAccess {
     )
 
     process {
-        $result = Get-FSAccessRule -Path $Path -Principal $Principal |
+        $show = if ($NoCompound) { 'NoCompound' } else { 'Compound' }
+
+        $groups = Get-FSAccessRule -Path $Path -Principal $Principal |
         ForEach-Object {
-            $show = if ($NoCompound) { 'NoCompound' } else { 'Compound' }
             $flags = Get-Flag $_.FileSystemRights -Show $show
 
             # Flatten structure
             foreach ($flag in $flags) {
-                New-Object psobject -Property @{
+                [pscustomobject] @{
                     "FileSystemRights"  = $flag
                     "AccessControlType" = $_.AccessControlType
                     "IsInherited"       = $_.IsInherited
@@ -49,14 +53,20 @@ function Get-FSEffectiveAccess {
             }
         } | # Non-inherited rules take precedence over inherited rules and Deny over Allow
         Sort-Object FileSystemRights, IsInherited, @{Expression = { $_.AccessControlType }; Ascending = $false } -Unique |
-        Group-Object FileSystemRights |
-        ForEach-Object { $_.Group | Select-Object -First 1 }
-        if ($result -and $AsHashTable) {
-            $ht = @{}
-            $result.ForEach( { $ht[$_.FileSystemRights] = ($_.AccessControlType -eq [AccessControlType]::Allow) })
-            $result = $ht
+        Group-Object FileSystemRights
+        $ht = @{}
+        foreach ($group in $groups) {
+            $first = $group.Group | Select-Object -First 1
+            if ($AsHashTable) {
+                $ht[$first.FileSystemRights] = ($first.AccessControlType -eq [AccessControlType]::Allow)
+            } else {
+                $first
+            }
         }
-        $result
+
+        if ($AsHashTable) {
+            $ht
+        }
     }
 }
 
