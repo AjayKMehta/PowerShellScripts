@@ -30,7 +30,7 @@ filter ConvertTo-SID
         }
         catch
         {
-            $PSCmdlet.WriteError("$id is not a valid account or could not be identified")
+            Write-Error "$id is not a valid account or could not be identified" -Category InvalidArgument
             $name = $null
         }
         $name
