@@ -13,6 +13,8 @@ function Get-DuplicateModule {
         and AllUsers specific folders.
     .PARAMETER ExtraInfo
         If set, results will also include Installed, Scope and InUse properties.
+    .NOTES
+        If you install the same version of a module with scope set to CurrentUser and AllUsers respectively, then Get-InstalledModule only shows 1 entry for the module name. Hence, Installed property may be unreliable in such cases.
     .OUTPUTS
         PSCustomObject[]
     .EXAMPLE
@@ -34,17 +36,17 @@ function Get-DuplicateModule {
     )
     $params = $PSBoundParameters
     @('AllLocations', 'ExtraInfo').Foreach( { $null = $params.Remove($_) })
-    $inUse = Get-Module @params | Select-Object Name, Version
+    $inUseModules = Get-Module @params
+    $inUse = [System.Collections.Generic.HashSet[string]]::new($inUseModules.Count)
+    $inUseModules | ForEach-Object { $null = $inUse.Add((Split-Path $_.Path -Parent)) }
 
-    filter test-used($Module) {
-        foreach ($inUseModule in $inUse) {
-            $result = $false
-            if ($Module.Name -eq $inUseModule.Name -and $Module.Version -eq $inUseModule.Version) {
-                $result = $true
-                break
-            }
+    function test-used($Module) {
+        $path = Split-Path $Module.Path -Parent
+        if ($inUse.Contains($path)) {
+            $null = $inUse.Remove($path)
+            return $true
         }
-        $result
+        return $false
     }
 
     $allUsersFolder = Split-Path (Split-Path $profile.AllUsersAllHosts -Parent) -Parent
