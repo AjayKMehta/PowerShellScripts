@@ -36,12 +36,14 @@ function Remove-RecentFile {
     $recent = [Environment]::GetFolderPath("Recent")
 
     if ($PSCmdlet.ParameterSetName -eq 'Default') {
+        $null = $PSBoundParameters.Remove('All')
         if ($All) {
             $sb = { $_.IsLink }
         } else {
             $sb = { $_.IsLink -and ([String]::IsNullOrEmpty($_.GetLink.Path) -or !(Test-Path $_.GetLink.Path)) }
         }
     } else {
+        $null = $PSBoundParameters.Remove('MinDate')
         $sb = { $_.IsLink -and ($_.ModifyDate -lt $MinDate) }
     }
 
