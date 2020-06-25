@@ -1,3 +1,5 @@
+using namespace Microsoft.VisualBasic.FileIO
+
 function Import-DataTable {
     <#
     .SYNOPSIS
@@ -7,14 +9,14 @@ function Import-DataTable {
     .PARAMETER LiteralPath
         This must be the path to a file. Wildcards are not supported.
     .PARAMETER Delimiter
-        Specifies the delimiter that separates the property values in the CSV file. The default is a comma (,).
+        Specifies the delimiters that separate the property values in the CSV file. The default is a comma (,).
     .PARAMETER Columns
         Specifies an array of strings to use for column names.
     .PARAMETER Encoding
         Specifies the encoding for the CSV file. Valid values are Unicode, UTF7, UTF8, ASCII, UTF32, BigEndianUnicode, Default, and OEM. The default is UTF8.
     .PARAMETER Skip
         Specifies the number of lines from the beginning of the file to skip.
-    .PARAMETER DetectEncodingFromByteOrderMarks
+    .PARAMETER DetectEncoding
         If specified, code detects the encoding by looking at the first three bytes of the stream.
         It automatically recognizes UTF-8, little-endian Unicode, and big-endian Unicode text if the file starts with the appropriate byte order marks.
         Otherwise, the user-provided encoding is used.
@@ -22,7 +24,7 @@ function Import-DataTable {
         System.String
         You can pipe the path of a file to Import-DataTable.
     .NOTES
-        Idea based on code in URL in Link section. If a field has an end-of-line character in its value, this will not parse the file correctly!
+        Inspired by URL in Link section.
     .LINK
         https://blog.netnerds.net/2015/02/working-with-basic-net-datasets-in-powershell/
     #>
@@ -38,7 +40,7 @@ function Import-DataTable {
 
         [ValidateNotNullOrEmpty()]
         [Alias('Separator')]
-        [char] $Delimiter = ',',
+        [string[]] $Delimiter = ',',
 
         [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory = $true, ParameterSetName = 'Columns')]
@@ -48,14 +50,15 @@ function Import-DataTable {
 
         [int] $Skip = 0,
 
-        [switch] $DetectEncodingFromByteOrderMarks
+        [switch] $DetectEncoding
     )
     process {
-        [Regex] $splitBy = [regex]::new($Delimiter + '(?=(?:[^"]*\"[^"]*")*(?![^"]*"))')
         [string] $file = Convert-Path $LiteralPath
 
         $result = [System.Data.DataTable]::new()
-        $reader = [System.IO.StreamReader]::new($file, $Encoding, $DetectEncodingFromByteOrderMarks)
+        $reader = [TextFieldParser]::new($file, $Encoding, $DetectEncoding)
+        $reader.TextFieldType = [FieldType]::Delimited
+        $reader.Delimiters = $Delimiter
 
         [bool] $hasHeader = $false
         if ($PSCmdlet.ParameterSetName -eq 'Columns') {
@@ -66,25 +69,30 @@ function Import-DataTable {
         }
 
         [int] $i = 0
-        while ($line = $reader.ReadLine()) {
-            $i++
-            if ($i -le $Skip) {
-                continue
-            }
-            Write-Verbose "Processing line $i of $file"
-            Write-Debug "line $i of $($file): $line"
-            [object[]] $vals = $splitBy.Split($line)
-            if (!$hasHeader) {
-                foreach ($col in $vals) {
-                    # Necessary to handle escaped column names!
-                    $null = $result.Columns.Add(($col -replace '^"([^"]*)"$', '$1'))
+        while (!$reader.EndOfData) {
+            try {
+                $vals = $reader.ReadFields()
+                $i++
+                if ($i -le $Skip) {
+                    continue
                 }
-                $hasHeader = $true
-            } else {
-                $null = $result.Rows.Add($vals)
+                Write-Verbose "Processing line $i of $file"
+                Write-Debug "line $i of $($file): $line"
+                if (!$hasHeader) {
+                    foreach ($col in $vals) {
+                        $null = $result.Columns.Add(($col))
+                        # Necessary to handle escaped column names!
+                        # $null = $result.Columns.Add(($col -replace '^"([^"]*)"$', '$1'))
+                    }
+                    $hasHeader = $true
+                } else {
+                    $null = $result.Rows.Add($vals)
+                }
+            } catch [MalformedLineException] {
+                $PSCmdlet.ThrowTerminatingError($_)
             }
         }
-        $numLines = if ($Skip -gt $i) {0} else {$i - $Skip}
+        $numLines = if ($Skip -gt $i) { 0 } else { $i - $Skip }
         Write-Verbose "Read $numLines lines of $file"
         # Add comma before so PowerShell doesn't convert to Object[]!
         , $result
