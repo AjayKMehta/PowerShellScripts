@@ -39,42 +39,49 @@ function Get-ParameterValue {
         foo2 -ErrorAction SilentlyContinue
         foo2 -X "A"
     #>
-    [Cmdletbinding(DefaultParameterSetName = 'Filter', PositionalBinding = $false)]
+    [OutputType([Hashtable])]
+    [Cmdletbinding(DefaultParameterSetName = 'Default', PositionalBinding = $false)]
     param
     (
         [Parameter(Mandatory = $true, Position = 0)]
         [InvocationInfo] $Invocation,
-        [Parameter(ParameterSetName = 'Filter', Position = 1)]
-        [ScriptBlock] $Filter = { $true },
-        [Parameter(ParameterSetName = 'Switch')]
+        [ValidateNotNull()]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Filter', Position = 1)]
+        #
+        [Func[ParameterMetadata, bool]] $Filter,
+        [Parameter(ParameterSetName = 'Default')]
         [switch] $ExcludeCommon,
-        [Parameter(ParameterSetName = 'Switch')]
+        [Parameter(ParameterSetName = 'Default')]
         [switch] $ExcludeOptionalCommon,
-        [Parameter(ParameterSetName = 'ParamSet')]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(ParameterSetName = 'Default')]
         [string] $ParamSet
     )
-
-    switch ($PSCmdlet.ParameterSetName) {
-        'Switch' {
-            $excluded = @()
-            if ($ExcludeCommon) { $excluded = [Cmdlet]::CommonParameters }
-            if ($ExcludeOptionalCommon) { $excluded += [Cmdlet]::OptionalCommonParameters }
-
-            if ($excluded.Count -gt 0) {
-                $Filter = { $excluded -notcontains $_.Name }
+    if ($PSCmdlet.ParameterSetName -eq 'Default') {
+        $Filter = {
+            param (
+                [ParameterMetadata] $Param
+            )
+            if ($ExcludeCommon -and [Cmdlet]::CommonParameters.Contains($Param.Name)) {
+                return $false
             }
-        }
-
-        'ParamSet' {
-            $Filter = { $_.ParameterSets.ContainsKey($ParamSet) }
+            if ($ExcludeOptionalCommon -and [Cmdlet]::OptionalCommonParameters.Contains($Param.Name)) {
+                return $false
+            }
+            if ($ParamSet) {
+                return ($Param.ParameterSets.ContainsKey($ParamSet) -or
+                    $Param.ParameterSets.ContainsKey('__AllParameterSets'))
+            }
+            return $true
         }
     }
 
     $params = @{}
-    # All cmdlet parameters with default values will exist as variables inside cmdlet.
-    $Invocation.MyCommand.Parameters.Values.Where($Filter).ForEach( {
+    $Invocation.MyCommand.Parameters.Values.Where( { $Filter.Invoke($_) }).ForEach( {
             [string] $name = $_.Name
             [object] $value = $null
+
+            # All cmdlet parameters with default values will exist as variables inside cmdlet.
             if ($Invocation.BoundParameters.TryGetValue($name, [ref] $value)) {
                 $params[$name] = $value
             } else {
