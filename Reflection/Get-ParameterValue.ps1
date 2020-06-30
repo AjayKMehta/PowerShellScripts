@@ -1,19 +1,19 @@
+using namespace System.Management.Automation
+
 function Get-ParameterValue {
     <#
     .SYNOPSIS
         Helper function to get values for all parameters.
     .DESCRIPTION
-        Helper function to get values for all parameters. Apply to $PSCmdlet.MyInvocation.MyCommand to get all parameter values.
-        If a parameter was passed in, it will also be in $PSBoundParameters. If a parameter is optional and there's no default value specified for it, then the value will be the default value for the parameter type.
+        Helper function to get values for all parameters. Apply to $PSCmdlet.MyInvocation.MyCommand to get all parameter values for the current command.
+        If a parameter was passed in, it will also be in $PSBoundParameters. If a parameter is optional and there's no default value specified for it, then it will be included and its value will be the default value for the parameter type.
     .EXAMPLE
-        function foo
-        {
+        function foo {
             [CmdletBinding()]
             param ([string] $X, [int] $Y)
 
-            Get-ParameterValue $pscmdlet.MyInvocation.MyCommand
             "Parameters are:"
-            (Get-ParameterValue $MyInvocation.MyCommand -ExcludeCommon).GetEnumerator() |
+            (Get-ParameterValue $MyInvocation -ExcludeCommon).GetEnumerator() |
             % {"{0} : {1}" -f $_.Key, $_.Value }
             "ErrorAction supplied? $($PSBoundParameters.ContainsKey('ErrorAction'))"
 
@@ -25,14 +25,13 @@ function Get-ParameterValue {
     .EXAMPLE
         function foo2
         {
-           [CmdletBinding()]
+            [CmdletBinding()]
             param
             (
                 [string] $X,
                 [Parameter(ParameterSetName = 'Y')][string] $Y='A'
             )
-            "Params common to all parameter sets:"
-            Get-ParameterValue $PSCmdlet.MyInvocation.MyCommand -ParamSet '__AllParameterSets'
+            Get-ParameterValue $PSCmdlet.MyInvocation -ParamSet $PSCmdlet.ParameterSetName
         }
 
         foo2 -Verbose
@@ -44,7 +43,7 @@ function Get-ParameterValue {
     param
     (
         [Parameter(Mandatory = $true, Position = 0)]
-        [System.Management.Automation.CommandInfo] $Cmd,
+        [InvocationInfo] $Invocation,
         [Parameter(ParameterSetName = 'Filter', Position = 1)]
         [ScriptBlock] $Filter = { $true },
         [Parameter(ParameterSetName = 'Switch')]
@@ -58,8 +57,8 @@ function Get-ParameterValue {
     switch ($PSCmdlet.ParameterSetName) {
         'Switch' {
             $excluded = @()
-            if ($ExcludeCommon) { $excluded = [System.Management.Automation.Cmdlet]::CommonParameters }
-            if ($ExcludeOptionalCommon) { $excluded += [System.Management.Automation.Cmdlet]::OptionalCommonParameters }
+            if ($ExcludeCommon) { $excluded = [Cmdlet]::CommonParameters }
+            if ($ExcludeOptionalCommon) { $excluded += [Cmdlet]::OptionalCommonParameters }
 
             if ($excluded.Count -gt 0) {
                 $Filter = { $excluded -notcontains $_.Name }
@@ -73,10 +72,15 @@ function Get-ParameterValue {
 
     $params = @{}
     # All cmdlet parameters with default values will exist as variables inside cmdlet.
-    $Cmd.Parameters.Values.Where($Filter).ForEach( {
+    $Invocation.MyCommand.Parameters.Values.Where($Filter).ForEach( {
             [string] $name = $_.Name
-            $var = Get-Variable $name -ErrorAction SilentlyContinue -Scope 1 # Parent scope
-            if ($var) { $params[$name] = $var.Value }
+            [object] $value = $null
+            if ($Invocation.BoundParameters.TryGetValue($name, [ref] $value)) {
+                $params[$name] = $value
+            } else {
+                $var = Get-Variable $name -ErrorAction SilentlyContinue -Scope 1 # Parent scope
+                if ($var) { $params[$name] = $var.Value }
+            }
         })
 
     $params

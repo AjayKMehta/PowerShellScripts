@@ -67,7 +67,7 @@ function New-XmlWriterSettings {
         [Alias('oxd', 'omit')]
         [switch] $OmitXmlDeclaration
     )
-    $params = Get-ParameterValue $MyInvocation.MyCommand
+    $params = Get-ParameterValue $MyInvocation
     $params.Add('CloseOutput', $true)
     New-Object -TypeName 'System.Xml.XmlWriterSettings' -Property $params
 }
