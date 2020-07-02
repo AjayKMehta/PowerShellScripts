@@ -2,34 +2,46 @@
 function New-Wrapper {
     <#
     .SYNOPSIS
-       Helps construct wrapper functions for creating .NET objects with parameter-less constructors and populating property values.
+       Helps construct wrapper functions for creating .NET objects.
     .DESCRIPTION
-       Helps construct wrapper functions for creating .NET objects with parameter-less constructors and populating property values.
-    .PARAMETER Name
-        Name of new function to create.
-    .PARAMETER Type
-        Type of .NET object to create.
-    .PARAMETER ChooseProperties
-        If specified, prompt the user to select properties.
-    .PARAMETER AddOutputType
-        If specified, add OutputType attribute to created function.
-    .PARAMETER UseSwitch
-        If specified, will use Switch parameters for Boolean properties.
+       Helps construct wrapper functions for creating .NET objects.
     .EXAMPLE
-        New-Wrapper -Name New-ParameterAttribute -Type Parameter -Choose -UseSwitch
+        New-Wrapper -Type Parameter -ChooseProperties | Out-File func.ps1 -Encoding UTF8
     #>
     param
     (
-        [Parameter(Mandatory, Position = 0)]
-        [string] $Name,
+        [Parameter(ParameterSetName = 'DefaultCons')]
+        [switch] $UseDefaultConstructor,
 
-        [ValidateScript( { $_.GetConstructor([Type]::EmptyTypes) })]
-        [Parameter(Mandatory, Position = 1)]
+        [ValidateScript(
+            {
+                if ($_.IsAbstract) { throw "Type cannot be abstract." }
+                # $UseDefaultConstructor will only be set if it precedes this parameter!
+                if ($UseDefaultConstructor -and !$_.GetConstructor([Type]::EmptyTypes)) {
+                    throw "No default constructor exists for $_"
+                }
+            })
+        ]
+        [Parameter(Mandatory = $true, Position = 0)]
+        # Type of .NET object to create.
         [Type] $Type,
 
+        [Parameter(Mandatory = $false, Position = 1)]
+        # Name of new function to create.
+        [string] $Name = "New-$($Type.Name)",
+
+        [Parameter(ParameterSetName = 'DefaultCons')]
+        # If specified, prompt the user to select properties.
         [Switch] $ChooseProperties,
-        [switch] $OutputType,
-        [switch] $UseSwitch
+
+        # If specified, add OutputType attribute to created function.
+        [switch] $AddOutputType,
+
+        # If set, will not use Switch parameters for Boolean properties.
+        [switch] $NoSwitch,
+
+        # If set, will set PositionalBinding for new function.
+        [switch] $PositionalBinding
     )
 
     $resType = $Type.Tostring()
@@ -38,30 +50,32 @@ function New-Wrapper {
     if ($AddOutputType) {
         $outputTypeStatement = "`r`n`t[OutputType($restype)]"
     }
+    if ($PScmdlet.ParameterSetName -eq 'DefaultCons') {
+        $properties = $Type.GetProperties().Where( { $_.SetMethod -and $_.CanWrite }) | Select-Object Name, PropertyType
 
-    $properties = $Type.GetProperties().Where( { $_.SetMethod -and $_.CanWrite }) | Select-Object Name, PropertyType
+        if ($ChooseProperties) {
+            $properties = $properties | Out-GridView -PassThru -Title 'Select properties'
+        }
 
-    if ($ChooseProperties) {
-        $properties = $properties | Out-GridView -PassThru -Title 'Select properties'
+        $params = $properties.ForEach( {
+                [string] $propType = $_.PropertyType;
+                if (!($NoSwitch) -and $_.propertytype -eq [bool]) {
+                    $proptype = 'switch'
+                }
+                "        [$propType] `$$($_.Name)";
+            }) -join ",`r`n"
     }
-
-    $params = $properties.ForEach( {
-            [string] $propType = $_.PropertyType;
-            if ($UseSwitch -and $_.propertytype -eq [bool])
-            { $proptype = 'switch' };
-            "        [$propType] `$$($_.Name)";
-        }) -join ",`r`n"
 
     @"
 function $Name {
     $outputTypeStatement
+    [CmdletBinding(PositionalBinding = $PositionalBinding)]
     param
     (
 $params
     )
 
-    [$($resType)] `$$ResultVarName = New-Object $($ResType) -Property `$PSBoundParameters
-    `$$ResultVarName
+    New-Object $($ResType) -Property `$PSBoundParameters
 }
 "@
 }
