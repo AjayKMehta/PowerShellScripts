@@ -7,25 +7,66 @@ function New-Wrapper {
     .EXAMPLE
         New-Wrapper -Type [Parameter] -Choose | Out-File func.ps1 -Encoding UTF8
     .EXAMPLE
-     class Test {
-        [int] $X
-        [string] $Y
-    }
+        class Test {
+            [int] $X
+            [string] $Y
 
-    New-Wrapper -Type ([Test]) -Choose -UseDefaultConstructor
+            Test([int] $x, [string] $y) {
+                $this.X = $x
+                $this.Y = $y
+            }
+        }
 
-    # OUTPUT
+        New-Wrapper -Type ([Test]) -UseDefaultConstructor -Name Get-Test
 
-    # function New-Test {
-    #     param
-    #     (
-    #         [int] $X,
-    #         [string] $Y
-    #     )
+        # OUTPUT
 
-    #     New-Object Test -Property $PSBoundParameters
-    # }
+        # function Get-Test {
+        #     param
+        #     (
+        #         [int] $X,
+        #         [string] $Y
+        #     )
 
+        #     New-Object Test -Property $PSBoundParameters
+        # }
+    .EXAMPLE
+        $typeDef = @"
+        using System;
+        using System.Collections.Generic;
+
+        namespace Test
+        {
+            public class Foo
+            {
+                public Foo(int num = 0 , bool isValid = true, IEnumerable<string> items = null)
+                {
+                    this.Number = num;
+                    this.IsValid = isValid;
+                    if (items != null)
+                    {
+                        this.Items.AddRange(items);
+                    }
+                }
+
+                public Foo(int num, bool isValid) : this(num, isValid, null)
+                {
+                }
+
+                public Foo(int num = 0) : this(num, true, null)
+                {
+                }
+
+                public int Number { get; }
+                public bool IsValid { get; }
+                public List<string> Items { get; }
+            }
+        }
+        "@
+
+        Add-Type -TypeDefinition $typeDef -Language CSharp
+
+        New-Wrapper ([Test.Foo]) -NoSwitch
     #>
     [CmdletBinding(DefaultParameterSetName = 'ChooseCons')]
     param
@@ -74,11 +115,40 @@ function New-Wrapper {
     if ($CmdletBinding) {
         $Attribs = "$Attribs`r`n    [CmdletBinding()]"
     }
+    function construct-param {
+        param (
+            [Type] $ParamType,
+            [string] $ParamName,
+            [bool] $HasDefaultValue = $false,
+            [object] $DefaultValue
+        )
+
+        [string] $paramType = $ParamType
+        $ParamName = $ParamName.Substring(0, 1).ToUpper() + $ParamName.SubString(1)
+
+        [bool] $isBool = $ParamType -eq [bool]
+        [bool] $hasSwitch = $false
+        if (!($NoSwitch) -and $isBool) {
+            $paramType = 'switch'
+            $hasSwitch = $true
+        }
+        if (!$hasSwitch -and $HasDefaultValue) {
+            $defValue = $($DefaultValue)
+            if ($isBool) {
+                $defValue = if ($defValue) { '$true' } else { '$false' }
+            } elseif ($null -eq $defValue) {
+                $defValue = '$null'
+            }
+            "        [$paramType] `$$($ParamName) = $defValue"
+        } else {
+            "        [$paramType] `$$($ParamName)"
+        }
+    }
 
     if ($PScmdlet.ParameterSetName -eq 'DefaultCons') {
         $properties = $Type.GetProperties().Where( { $_.SetMethod -and $_.CanWrite }) | Select-Object Name, PropertyType
 
-        if ($ChooseProperties) {
+        if ($ChooseProperties -and $properties) {
             $properties = $properties | Out-GridView -PassThru -Title 'Select properties'
             if (!$properties) {
                 throw "Operation canceled."
@@ -86,11 +156,7 @@ function New-Wrapper {
         }
 
         $params = $properties.ForEach( {
-                [string] $paramType = $_.PropertyType
-                if (!($NoSwitch) -and $_.propertytype -eq [bool]) {
-                    $paramType = 'switch'
-                }
-                "        [$paramType] `$$($_.Name)"
+                construct-param $_.PropertyType $_.Name
             }) -join ",`r`n"
     } else {
         $constructors = $Type.GetConstructors()
@@ -112,15 +178,7 @@ function New-Wrapper {
         }
 
         $params = $cons.Params.ForEach( {
-                [string] $paramType = $_.ParameterType
-                if (!($NoSwitch) -and $_.ParameterType.Name -eq 'Boolean') {
-                    $paramType = 'switch'
-                }
-                if ($_.HasDefaultValue) {
-                    "        [$paramType] `$$($_.Name) = $($_.DefaultValue)"
-                } else {
-                    "        [$paramType] `$$($_.Name)"
-                }
+                construct-param $_.ParameterType $_.Name $_.HasDefaultValue $_.DefaultValue
             }) -join ",`r`n"
     }
 
