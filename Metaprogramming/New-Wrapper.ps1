@@ -1,11 +1,31 @@
 function New-Wrapper {
     <#
     .SYNOPSIS
-       Helps construct wrapper functions for creating .NET objects.
+       Helps construct wrapper functions for creating instances of .NET and PowerShell classes.
     .DESCRIPTION
-       Helps construct wrapper functions for creating .NET objects.
+       Helps construct wrapper functions for creating instances of .NET and PowerShell classes
     .EXAMPLE
-        New-Wrapper -Type Parameter -ChooseProperties | Out-File func.ps1 -Encoding UTF8
+        New-Wrapper -Type [Parameter] -Choose | Out-File func.ps1 -Encoding UTF8
+    .EXAMPLE
+     class Test {
+        [int] $X
+        [string] $Y
+    }
+
+    New-Wrapper -Type ([Test]) -Choose -UseDefaultConstructor
+
+    # OUTPUT
+
+    # function New-Test {
+    #     param
+    #     (
+    #         [int] $X,
+    #         [string] $Y
+    #     )
+
+    #     New-Object Test -Property $PSBoundParameters
+    # }
+
     #>
     [CmdletBinding(DefaultParameterSetName = 'ChooseCons')]
     param
@@ -20,6 +40,7 @@ function New-Wrapper {
                 if ($UseDefaultConstructor -and !$_.GetConstructor([Type]::EmptyTypes)) {
                     throw "No default constructor exists for $_"
                 }
+                return $true
             })
         ]
         [Parameter(Mandatory = $true, ParameterSetName = 'ChooseCons', Position = 0)]
@@ -41,25 +62,31 @@ function New-Wrapper {
         # If set, will not use Switch parameters for Boolean properties.
         [switch] $NoSwitch,
 
-        # If set, will set PositionalBinding for new function.
-        [switch] $PositionalBinding
+        # If set, will set CmdletBinding for new function.
+        [switch] $CmdletBinding
     )
 
     $resType = $Type.Tostring()
 
-    [string] $outputTypeStatement = $null
     if ($AddOutputType) {
-        $outputTypeStatement = "`r`n`t[OutputType($restype)]"
+        $Attribs = "`r`n    [OutputType([$restype])]"
     }
+    if ($CmdletBinding) {
+        $Attribs = "$Attribs`r`n    [CmdletBinding()]"
+    }
+
     if ($PScmdlet.ParameterSetName -eq 'DefaultCons') {
         $properties = $Type.GetProperties().Where( { $_.SetMethod -and $_.CanWrite }) | Select-Object Name, PropertyType
 
         if ($ChooseProperties) {
             $properties = $properties | Out-GridView -PassThru -Title 'Select properties'
+            if (!$properties) {
+                throw "Operation canceled."
+            }
         }
 
         $params = $properties.ForEach( {
-                [string] $paramType = $_.PropertyType;
+                [string] $paramType = $_.PropertyType
                 if (!($NoSwitch) -and $_.propertytype -eq [bool]) {
                     $paramType = 'switch'
                 }
@@ -85,7 +112,7 @@ function New-Wrapper {
         }
 
         $params = $cons.Params.ForEach( {
-                [string] $paramType = $_.ParameterType;
+                [string] $paramType = $_.ParameterType
                 if (!($NoSwitch) -and $_.ParameterType.Name -eq 'Boolean') {
                     $paramType = 'switch'
                 }
@@ -98,9 +125,7 @@ function New-Wrapper {
     }
 
     @"
-function $Name {
-    $outputTypeStatement
-    [CmdletBinding(PositionalBinding = $PositionalBinding)]
+function $Name {$Attribs
     param
     (
 $params
