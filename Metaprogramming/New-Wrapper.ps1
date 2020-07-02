@@ -1,4 +1,3 @@
-#TODO: Extend logic to handle non-default constructors.
 function New-Wrapper {
     <#
     .SYNOPSIS
@@ -8,6 +7,7 @@ function New-Wrapper {
     .EXAMPLE
         New-Wrapper -Type Parameter -ChooseProperties | Out-File func.ps1 -Encoding UTF8
     #>
+    [CmdletBinding(DefaultParameterSetName = 'ChooseCons')]
     param
     (
         [Parameter(ParameterSetName = 'DefaultCons')]
@@ -22,7 +22,8 @@ function New-Wrapper {
                 }
             })
         ]
-        [Parameter(Mandatory = $true, Position = 0)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'ChooseCons', Position = 0)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'DefaultCons', Position = 0)]
         # Type of .NET object to create.
         [Type] $Type,
 
@@ -58,11 +59,41 @@ function New-Wrapper {
         }
 
         $params = $properties.ForEach( {
-                [string] $propType = $_.PropertyType;
+                [string] $paramType = $_.PropertyType;
                 if (!($NoSwitch) -and $_.propertytype -eq [bool]) {
-                    $proptype = 'switch'
+                    $paramType = 'switch'
                 }
-                "        [$propType] `$$($_.Name)";
+                "        [$paramType] `$$($_.Name)"
+            }) -join ",`r`n"
+    } else {
+        $constructors = $Type.GetConstructors()
+
+        if ($constructors.Count -eq 0) {
+            throw "$($Type.Name) has no public instance constructors"
+        } elseif ($constructors.Count -eq 1) {
+            $cons = $constructors[0] |
+            Select-Object @{Name = 'Signature'; Expression = { $_.ToString() } },
+            @{Name = 'Params'; Expression = { $_.GetParameters() } }
+        } else {
+            $cons = $constructors |
+            Select-Object @{Name = 'Signature'; Expression = { $_.ToString() } },
+            @{Name = 'Params'; Expression = { $_.GetParameters() } } |
+            Out-GridView -PassThru
+            if (!$cons) {
+                throw "Operation canceled."
+            }
+        }
+
+        $params = $cons.Params.ForEach( {
+                [string] $paramType = $_.ParameterType;
+                if (!($NoSwitch) -and $_.ParameterType.Name -eq 'Boolean') {
+                    $paramType = 'switch'
+                }
+                if ($_.HasDefaultValue) {
+                    "        [$paramType] `$$($_.Name) = $($_.DefaultValue)"
+                } else {
+                    "        [$paramType] `$$($_.Name)"
+                }
             }) -join ",`r`n"
     }
 
@@ -74,6 +105,11 @@ function $Name {
     (
 $params
     )
+
+    # Add similar logic for optional common parameters if necessary.
+    foreach (`$p in [System.Management.Automation.Cmdlet]::CommonParameters) {
+        `$null = `$PSBoundParameters.Remove(`$p)
+    }
 
     New-Object $($ResType) -Property `$PSBoundParameters
 }
