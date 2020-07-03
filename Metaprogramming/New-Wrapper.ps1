@@ -1,3 +1,5 @@
+using namespace System.Collections.Generic
+
 function New-Wrapper {
     <#
     .SYNOPSIS
@@ -115,35 +117,6 @@ function New-Wrapper {
     if ($CmdletBinding) {
         $Attribs = "$Attribs`r`n    [CmdletBinding()]"
     }
-    function construct-param {
-        param (
-            [Type] $ParamType,
-            [string] $ParamName,
-            [bool] $HasDefaultValue = $false,
-            [object] $DefaultValue
-        )
-
-        [string] $paramType = $ParamType
-        $ParamName = $ParamName.Substring(0, 1).ToUpper() + $ParamName.SubString(1)
-
-        [bool] $isBool = $ParamType -eq [bool]
-        [bool] $hasSwitch = $false
-        if (!($NoSwitch) -and $isBool) {
-            $paramType = 'switch'
-            $hasSwitch = $true
-        }
-        if (!$hasSwitch -and $HasDefaultValue) {
-            $defValue = $($DefaultValue)
-            if ($isBool) {
-                $defValue = if ($defValue) { '$true' } else { '$false' }
-            } elseif ($null -eq $defValue) {
-                $defValue = '$null'
-            }
-            "        [$paramType] `$$($ParamName) = $defValue"
-        } else {
-            "        [$paramType] `$$($ParamName)"
-        }
-    }
 
     if ($PScmdlet.ParameterSetName -eq 'DefaultCons') {
         $properties = $Type.GetProperties().Where( { $_.SetMethod -and $_.CanWrite }) | Select-Object Name, PropertyType
@@ -154,10 +127,31 @@ function New-Wrapper {
                 throw "Operation canceled."
             }
         }
-
-        $params = $properties.ForEach( {
-                construct-param $_.PropertyType $_.Name
-            }) -join ",`r`n"
+        if ($properties.Count -gt 0) {
+            $params = foreach ($p in $properties) {
+                [string] $paramType = $p.PropertyType
+                $paramName = $p.Name.Substring(0, 1).ToUpper() + $p.Name.SubString(1)
+                if (!($NoSwitch) -and $p.PropertyType -eq [bool]) {
+                    $paramType = 'switch'
+                }
+                "        [$paramType] `$$($paramName)"
+            }
+            $params = $params -join ",`r`n"
+            if ($CmdletBinding) {
+                $body = @"
+    # Add similar logic for optional common parameters if necessary.
+    foreach (`$p in [System.Management.Automation.Cmdlet]::CommonParameters) {
+        `$null = `$PSBoundParameters.Remove(`$p)
+    }
+    New-Object $resType -Property `$PSBoundParameters
+"@
+            } else {
+                $body = "    New-Object $resType -Property `$PSBoundParameters"
+            }
+        } else {
+            $params = ''
+            $body = "    New-Object $resType"
+        }
     } else {
         $constructors = $Type.GetConstructors()
 
@@ -177,9 +171,43 @@ function New-Wrapper {
             }
         }
 
-        $params = $cons.Params.ForEach( {
-                construct-param $_.ParameterType $_.Name $_.HasDefaultValue $_.DefaultValue
-            }) -join ",`r`n"
+        $numParams = $cons.Params.Count
+
+        if ($numParams -gt 0) {
+            $paramList = [List[string]]::new($numParams)
+            $valList = [List[string]]::new($numParams)
+
+            foreach ($p in $cons.Params) {
+                [string] $paramType = $p.ParameterType
+                $paramName = $p.Name.Substring(0, 1).ToUpper() + $p.Name.SubString(1)
+                $valList.Add("`$$ParamName")
+
+                [bool] $isBool = $p.ParameterType -eq [bool]
+                if (!($NoSwitch) -and $isBool) {
+                    $paramType = 'switch'
+                    $hasSwitch = $true
+                }
+                if (!$hasSwitch -and $p.HasDefaultValue) {
+                    $defValue = $p.DefaultValue
+                    if ($isBool) {
+                        $defValue = if ($defValue) { '$true' } else { '$false' }
+                    } elseif ($null -eq $defValue) {
+                        $defValue = '$null'
+                    }
+                    $paramList.Add("        [$paramType] `$$($ParamName) = $defValue")
+                } else {
+                    $paramList.Add("        [$paramType] `$$($ParamName)")
+                }
+            }
+
+            $params = $paramList -join ",`r`n"
+
+            $body = "    New-Object $resType -ArgumentList $($valList -join ', ')"
+        } else {
+            $params = ''
+
+            $body = "    New-Object $resType"
+        }
     }
 
     @"
@@ -188,13 +216,7 @@ function $Name {$Attribs
     (
 $params
     )
-
-    # Add similar logic for optional common parameters if necessary.
-    foreach (`$p in [System.Management.Automation.Cmdlet]::CommonParameters) {
-        `$null = `$PSBoundParameters.Remove(`$p)
-    }
-
-    New-Object $($ResType) -Property `$PSBoundParameters
+$body
 }
 "@
 }
