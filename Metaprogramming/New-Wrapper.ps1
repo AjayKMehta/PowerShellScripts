@@ -74,6 +74,7 @@ function New-Wrapper {
     [CmdletBinding(DefaultParameterSetName = 'ChooseCons')]
     param
     (
+        [Alias('udc', 'defcons')]
         [Parameter(ParameterSetName = 'DefaultCons')]
         [switch] $UseDefaultConstructor,
 
@@ -160,7 +161,7 @@ function New-Wrapper {
     New-Object $resType -Property `$PSBoundParameters
 "@
                 } else {
-                    $body = "    New-Object $resTy e -Property `$PSBoundParameters"
+                    $body = "    New-Object $resType -Property `$PSBoundParameters"
                 }
             } else {
                 $params = ''
