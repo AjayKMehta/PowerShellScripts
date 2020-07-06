@@ -24,7 +24,7 @@ function Format-Xml {
     [CmdletBinding(DefaultParameterSetName = "LiteralPath", PositionalBinding = $false)]
     param
     (
-        [ValidatePathExists()]
+        [ValidatePathExists(PathType = 'Leaf')]
         [Parameter(ParameterSetName = "LiteralPath", Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [Alias('PSPath', 'FullName')]
         [string] $LiteralPath,
