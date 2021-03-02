@@ -95,12 +95,14 @@ function Get-ParameterValue {
             [string] $name = $_.Name
             [object] $value = $null
 
-            # All cmdlet parameters with default values will exist as variables inside cmdlet.
             if ($Invocation.BoundParameters.TryGetValue($name, [ref] $value)) {
                 $params[$name] = $value
             } else {
-                $var = Get-Variable $name -ErrorAction SilentlyContinue -Scope 1 # Parent scope
-                if ($var) { $params[$name] = $var.Value }
+                # All cmdlet parameters with default values will exist as variables inside cmdlet.
+                $var = Get-Variable $name -ErrorAction Ignore -Scope 1 # Parent scope
+                if ($var) { $params[$name] = $var.Value } else {
+                    Write-Verbose "$name was not passed to command and does not have a default value."
+                }
             }
         })
 
