@@ -51,7 +51,7 @@ filter Get-Namespace {
     .LINK
         http://stackoverflow.com/questions/767541/how-i-can-list-out-all-the-namespace-in-xml
     #>
-    [Outputtype([System.Collections.Generic.Dictionary[string, string]])]
+    [Outputtype([Dictionary[string, string]])]
     [CmdletBinding(DefaultParameterSetName = 'Node', PositionalBinding = $false)]
     param
     (
