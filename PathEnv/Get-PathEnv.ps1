@@ -11,7 +11,10 @@ function Get-PathEnv {
     .PARAMETER NoTrim
         If set, do not trim returned values.
     .NOTES
-        This will automatically trim paths returned unless NoTrim is set. If used with Path as opposed to Target, environment variables will not be replaced by their corresponding values in returned results, e.g. it will not replace %TMP% with "C:\Users\$($env:UserName)\AppData\Local\Temp".
+        This will automatically trim paths returned unless NoTrim is set.
+        If used with Path as opposed to Target, environment variables will not
+        be replaced by their corresponding values in returned results, e.g. it
+        will not replace %TMP% with "C:\Users\$($env:UserName)\AppData\Local\Temp".
     .EXAMPLE
         Get-PathEnv -Path 'C:\temp; D:\git'
     .EXAMPLE
@@ -64,7 +67,7 @@ function Get-PathEnv {
             if ($Path[$current] -eq '"') {
                 $end = $Path.IndexOf([char] '"', $current + 1)
                 if ($end -eq -1 -or ($end -lt $len - 1 -and $Path[$end + 1] -ne ';')) {
-                    throw "Malformed text"
+                    throw 'Malformed text'
                 }
                 [string] $val = $Path.Substring($current + 1, $end - $current - 1)
                 get-val $val

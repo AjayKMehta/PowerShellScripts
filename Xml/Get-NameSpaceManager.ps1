@@ -3,13 +3,16 @@ filter Get-NamespaceManager {
     .SYNOPSIS
         Returns an XmlNamespaceManager for an XML document.
     .DESCRIPTION
-        Returns an XmlNameSpaceManager for an XML document. It does this by parsing all nodes with namespace prefixes.
-        If a namespace is mapped to more than one prefix, it will only use the first if -Unique is set.
-        If a prefix is used more than once in a document, it will only use the first one and create dummy prefixes for subsequent occurences.
+        Returns an XmlNameSpaceManager for an XML document. It does this by
+        parsing all nodes with namespace prefixes. If a namespace is mapped to
+        more than one prefix, it will only use the first if -Unique is set. If a
+        prefix is used more than once in a document, it will only use the first
+        one and create dummy prefixes for subsequent occurences.
     .PARAMETER XmlDocument
         The document for which you need a namespace manager.
     .PARAMETER DefaultPrefix
-        Prefix for default namespace(s). Also, used for cases where duplicate prefixes pointing to different namespaces. Defaults to 'ns'.
+        Prefix for default namespace(s). Also, used for cases where duplicate
+        prefixes point to different namespaces. Defaults to 'ns'.
     .PARAMETER Unique
         If set, do not add multiple prefixes for same namespace.
     .OUTPUTS
@@ -29,10 +32,11 @@ filter Get-NamespaceManager {
         '@)
 
         $nsm = Get-NamespaceManager $xmlDoc -Verbose
-        $nsm.GetEnumerator() | % { $_,$nsm.LookupNamespace($_) }
+        $nsm.GetEnumerator() | % {if ($_) { "$_ = $($nsm.LookupNamespace($_))" }}
     .EXAMPLE
         # This uses same $xmlDoc as previous example.
-        $xmlDoc | Get-NameSpaceManager -Prefix 'ns'
+        $nsm = $xmlDoc | Get-NameSpaceManager -DefaultPrefix 'ns' -Unique
+        $nsm.GetNamespacesInScope([System.Xml.XmlNamespaceScope]::Local)
     #>
     [OutputType([Xml.XmlNamespaceManager])]
     [Cmdletbinding()]
@@ -55,27 +59,28 @@ filter Get-NamespaceManager {
     [int] $ctr = 0;
 
     $XmlDocument.SelectNodes('//namespace::*[not(. = ../../namespace::*)]') |
-    ForEach-Object {
-        $prefix, $nsURI = $_.LocalName, $_.Value ;
-        [bool] $add = $true
+        ForEach-Object {
+            $prefix, $nsURI = $_.LocalName, $_.Value ;
+            [bool] $add = $true
 
-        if ($Unique) {
-            [string] $p = $xmlNsManager.LookupPrefix($nsURI)
-            if ($p -and ($p -ne $prefix)) {
-                Write-Verbose "Namespace '$nsURI' already mapped to prefix '$p'. Skip mapping to '$prefix'."
+            if ($Unique) {
+                [string] $p = $xmlNsManager.LookupPrefix($nsURI)
+                if ($p -and ($p -ne $prefix)) {
+                    Write-Verbose "Namespace '$nsURI' already mapped to prefix '$p'. Skip mapping to '$prefix'."
 
-                $add = $false
+                    $add = $false
+                }
+            }
+            if ($add) {
+                if (($prefix -eq 'xmlns') -or (($prefix -ne 'xml') -and $xmlNsManager.HasNamespace($prefix))) {
+                    $prefix = "$DefaultPrefix$(if($ctr){$ctr})"
+                    $ctr++
+                }
+                $xmlNsManager.AddNamespace($prefix, $nsURI)
             }
         }
-        if ($add) {
-            if (($prefix -eq 'xmlns') -or (($prefix -ne 'xml') -and $xmlNsManager.HasNamespace($prefix))) {
-                $prefix = "$DefaultPrefix$(if($ctr){$ctr})"
-                $ctr++
-            }
-            $xmlNsManager.AddNamespace($prefix, $nsURI)
-        }
-    }
 
-    # Need to put the comma before the variable name so that PowerShell doesn't convert it into an Object[].
+    # Need to put the comma before the variable name so that PowerShell doesn't
+    # convert it into an Object[].
     , $xmlNsManager
 }

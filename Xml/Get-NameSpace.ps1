@@ -11,7 +11,8 @@ filter Get-Namespace {
     .PARAMETER XNode
         Node for which you wish to get defined namespaces.
     .PARAMETER DefaultPrefix
-        Prefix for default namespace(s). Also, used for cases where duplicate prefixes pointing to different namespaces. Defaults to 'ns'.
+        Prefix for default namespace(s). Also, used for cases where duplicate
+        prefixes pointing to different namespaces. Defaults to 'ns'.
     .PARAMETER Unique
         If set, do not add multiple prefixes for same namespace.
     .OUTPUTS
@@ -73,10 +74,10 @@ filter Get-Namespace {
     $nsPrefixes =
     if ($PSCmdlet.ParameterSetName -eq 'Node') {
         $Node.SelectNodes('//namespace::*[not(. = ../../namespace::*)]') |
-        Select-Object LocalName, Value
+            Select-Object LocalName, Value
     } else {
         [System.Xml.XPath.Extensions]::XPathEvaluate($XNode, '//namespace::*[not(. = ../../namespace::*)]') |
-        Select-Object Value -ExpandProperty Name
+            Select-Object Value -ExpandProperty Name
     }
 
     $result = [Dictionary[string, string]]::new()

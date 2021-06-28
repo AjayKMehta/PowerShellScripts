@@ -3,7 +3,9 @@ function Format-Xml {
     .SYNOPSIS
         Formats XML file or document.
     .DESCRIPTION
-        Formats XML file based on XmlWriterSettings supplied . If the input is a document, output is a string. If file, it will overwrite existing file with desired output.
+        Formats XML file based on XmlWriterSettings supplied . If the input is a
+        document, output is a string. If file, it will overwrite existing file
+        with desired output.
     .PARAMETER LiteraPath
         Path to an XML file. Can take input from pipeline.
     .PARAMETER Xml
@@ -21,19 +23,21 @@ function Format-Xml {
     .LINK
         https://docs.microsoft.com/en-us/dotnet/api/system.xml.xmlwritersettings?view=netcore-3.1
     #>
-    [CmdletBinding(DefaultParameterSetName = "LiteralPath", PositionalBinding = $false)]
+    [CmdletBinding(DefaultParameterSetName = 'LiteralPath', PositionalBinding = $false)]
     param
     (
         [ValidatePathExists(PathType = 'Leaf')]
-        [Parameter(ParameterSetName = "LiteralPath", Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(
+            ParameterSetName = 'LiteralPath', Mandatory = $true, Position = 0,
+            ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [Alias('PSPath', 'FullName')]
         [string] $LiteralPath,
 
-        [Parameter(ParameterSetName = "XML", Mandatory = $true, Position = 0 )]
+        [Parameter(ParameterSetName = 'XML', Mandatory = $true, Position = 0 )]
         [XML] $Xml,
 
-        [Parameter(ParameterSetName = "LiteralPath", Mandatory = $true, Position = 1)]
-        [Parameter(ParameterSetName = "XML", Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'LiteralPath', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'XML', Mandatory = $true, Position = 1)]
         [System.Xml.XmlWriterSettings] $Settings
 
     )

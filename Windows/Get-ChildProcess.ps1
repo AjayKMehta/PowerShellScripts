@@ -29,8 +29,9 @@ function Get-ChildProcess {
         if (!$Id) {
             $Id = Get-Process -Name $Name | Select-Object -ExpandProperty Id
         }
-        foreach($i in $Id) {
-            Get-CimInstance win32_process -Filter "ParentProcessId = $i" | Get-Process -Id {$_.ProcessId}
+        foreach ($i in $Id) {
+            Get-CimInstance win32_process -Filter "ParentProcessId = $i" |
+                Get-Process -Id { $_.ProcessId }
         }
     }
 }

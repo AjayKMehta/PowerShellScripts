@@ -7,9 +7,11 @@ function Get-DynamicParameter {
     .DESCRIPTION
         Get dynamic parameters for a command.
     .PARAMETER Command
-        The command whose dynamic parameters you wish to get. Can take values from the pipeline.
+        The command whose dynamic parameters you wish to get. Can take values
+        from the pipeline.
     .PARAMETER CommandName
-        The name of the command(s) whose dynamic parameters you wish to get. Can accept wildcard characters.
+        The name of the command(s) whose dynamic parameters you wish to get. Can
+        accept wildcard characters.
     .EXAMPLE
         Get-Command Get-ChildItem | Get-DynamicParameter
     .EXAMPLE

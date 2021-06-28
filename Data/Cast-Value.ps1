@@ -9,7 +9,8 @@ function Cast-Value {
     .PARAMETER PropertyTypeMap
         A hashtable with property names as keys and types as values.
     .PARAMETER UseDefaults
-        If specified, will use default value of type if cast fails. For example, if we try to cast x.Value which has value "Test" to [int], this will fail.
+        If specified, will use default value of type if cast fails. For example,
+        if we try to cast x.Value which has value "Test" to [int], this will fail.
         So, assign x.Value to 0 (default value for [int]).
     .EXAMPLE
         $test = @"
