@@ -39,19 +39,24 @@ function Import-DataTable {
         # Specifies an array of strings to use for column names.
         [string[]] $Header,
 
-        # Specifies the encoding for the CSV file. Valid values are Unicode, UTF7, UTF8, ASCII, UTF32, BigEndianUnicode, Default, and OEM. The default is UTF8.
+        # Specifies the encoding for the CSV file. Valid values are Unicode,
+        # UTF7, UTF8, ASCII, UTF32, BigEndianUnicode, Default, and OEM. The
+        # default is UTF8.
         [System.Text.Encoding] $Encoding = [System.Text.Encoding]::Default,
 
         # Specifies the number of *uncommented* lines from the beginning of the file to skip.
         [int] $Skip = 0,
 
-        # If specified, code detects the encoding by looking at the first three bytes of the stream.
-        # It automatically recognizes UTF-8, little-endian Unicode, and big-endian Unicode text if the file starts with the appropriate byte order marks.
-        # Otherwise, the user-provided encoding is used.
+        # If specified, code detects the encoding by looking at the first three
+        # bytes of the stream. It automatically recognizes UTF-8, little-endian
+        # Unicode, and big-endian Unicode text if the file starts with the
+        # appropriate byte order marks. Otherwise, the user-provided encoding is
+        # used.
         [switch] $DetectEncoding,
 
         [Parameter(Mandatory = $false)]
-        # Strings whose presence at beginning of lines indicates that line is a comment and should be ignored.
+        # Strings whose presence at beginning of lines indicates that line is a
+        # comment and should be ignored.
         [string[]] $CommentTokens,
 
         # If set, trim whitespace from values.

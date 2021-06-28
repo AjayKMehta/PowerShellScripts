@@ -1,7 +1,6 @@
 using namespace System.Security.Principal
 
-filter ConvertTo-SID
-{
+filter ConvertTo-SID {
     <#
     .SYNOPSIS
         Convert user or computer account name to SID
@@ -21,15 +20,11 @@ filter ConvertTo-SID
         [string[]]$AccountName
     )
 
-    foreach($id in $AccountName)
-    {
-        try
-        {
+    foreach ($id in $AccountName) {
+        try {
             $account = [NTAccount]::new($id)
             $name = ($account.Translate([SecurityIdentifier]) ).Value
-        }
-        catch
-        {
+        } catch {
             Write-Error "$id is not a valid account or could not be identified" -Category InvalidArgument
             $name = $null
         }

@@ -1,8 +1,7 @@
 function Test-Integer($x) {
-    try{
+    try {
         return ([int]$x -eq $x)
-    }
-    catch{
+    } catch {
         return $false
     }
 }

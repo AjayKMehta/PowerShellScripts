@@ -11,9 +11,15 @@ class ValidatePathExistsAttribute : ValidateArgumentsAttribute {
         }
         if (-not (Test-Path -Path $Path -PathType $this.PathType)) {
             switch ($this.PathType) {
-                'Container' { throw [DirectoryNotFoundException]::new("Unable to find the specified folder: $Path") }
-                'Leaf' { throw [FileNotFoundException]::new("Unable to find the specified file: $Path") }
-                default { throw [IOException]::new("Unable to find the specified path: $Path") }
+                'Container' {
+                    throw [DirectoryNotFoundException]::new("Unable to find the specified folder: $Path")
+                }
+                'Leaf' {
+                    throw [FileNotFoundException]::new("Unable to find the specified file: $Path")
+                }
+                default {
+                    throw [IOException]::new("Unable to find the specified path: $Path")
+                }
             }
         }
     }

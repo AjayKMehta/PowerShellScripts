@@ -7,14 +7,18 @@ function Get-DuplicateModule {
     .DESCRIPTION
         Get the modules for which there are multiple versions installed.
     .PARAMETER Name
-        Specifies names or name patterns of modules that this cmdlet gets. Wildcard characters are permitted.
+        Specifies names or name patterns of modules that this cmdlet gets.
+        Wildcard characters are permitted.
     .PARAMETER AllLocations
-        If set, check modules in all folders in $env:PSModulePath. Else, it only looks in CurrentUser
-        and AllUsers specific folders.
+        If set, check modules in all folders in $env:PSModulePath. Else, it only
+        looks in CurrentUser and AllUsers specific folders.
     .PARAMETER ExtraInfo
         If set, results will also include Installed, Scope and InUse properties.
     .NOTES
-        If you install the same version of a module with scope set to CurrentUser and AllUsers respectively, then Get-InstalledModule only shows 1 entry for the module name. Hence, Installed property may be unreliable in such cases.
+        If you install the same version of a module with scope set to
+        CurrentUser and AllUsers respectively, then Get-InstalledModule only
+        shows 1 entry for the module name. Hence, Installed property may be
+        unreliable in such cases.
     .OUTPUTS
         PSCustomObject[]
     .EXAMPLE
@@ -85,11 +89,11 @@ function Get-DuplicateModule {
     }
 
     Get-Module @params -ListAvailable |
-    Where-Object { $AllLocations -or (test-ok $_.Path) } |
-    Select-Object Name, Version, Path |
-    Sort-Object Name, Version -Descending |
-    Group-Object Name |
-    Where-Object Count -gt 1 |
-    Select-Object -ExpandProperty Group |
-    Select-Object -Property $fields
+        Where-Object { $AllLocations -or (test-ok $_.Path) } |
+        Select-Object Name, Version, Path |
+        Sort-Object Name, Version -Descending |
+        Group-Object Name |
+        Where-Object Count -GT 1 |
+        Select-Object -ExpandProperty Group |
+        Select-Object -Property $fields
 }

@@ -46,7 +46,7 @@ function Repair-PathEnv {
                 # Find closing double quote
                 $end = $Path.IndexOf([char] '"', $current + 1)
                 if ($end -eq -1 -or ($end -lt $len - 1 -and $Path[$end + 1] -ne ';')) {
-                    throw "Malformed text"
+                    throw 'Malformed text'
                 }
 
                 $val = $Path.Substring($current, $end - $current + 1).Trim()
@@ -72,7 +72,8 @@ function Repair-PathEnv {
         }
 
         $res = $paths -join ';'
-        if (($badPaths.Count -gt 0) -and $PSCmdlet.ShouldProcess($badPaths -join ',', 'Remove')) {
+        if (($badPaths.Count -gt 0) -and
+            $PSCmdlet.ShouldProcess($badPaths -join ',', 'Remove')) {
             if ($useTarget) {
                 [Environment]::SetEnvironmentVariable('PATH', $res, $EnvTarget)
             } else {

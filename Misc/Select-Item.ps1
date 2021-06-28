@@ -20,11 +20,17 @@
 .PARAMETER ReturnKey
     If specified will return the value of the selected item. Else, will return index.
 .EXAMPLE
-    Select-Item -Caption "Rock Paper Scissors" -Message "Choose Rock, Paper or Scissors" -TextChoices "&Rock", "&Paper", "&Scissors"
+    $params = @{
+        TextChoices = "&Rock", "&Paper", "&Scissors"
+        Message = "Choose Rock, Paper or Scissors"
+        Caption = "Rock Paper Scissors"
+    }
+    Select-Item @params
 .EXAMPLE
     @('A','B'), @(1..2) | Select-Item -Default 3
 .EXAMPLE
-    Select-Item @{'Rock' ="&Rock"; 'Paper' = "&Paper"; 'Scissors' = '&Scissors'}  -Caption 'Rock Paper Scissors' -ReturnKey
+    $choices = @{'Rock' ="&Rock"; 'Paper' = "&Paper"; 'Scissors' = '&Scissors'}
+    Select-Item $choices -Caption 'Rock Paper Scissors' -ReturnKey
 .LINK
     https://jamesone111.wordpress.com/2009/06/24/how-to-get-user-input-more-nicely-in-powershell/
     https://jamesone111.wordpress.com/2011/12/10/powershell-hashtables-splatting-nesting-driving-selections-and-generally-simplifying-life/
@@ -65,7 +71,8 @@ function Select-Item {
         }
     }
     end {
-        [int] $index = $Host.UI.PromptForChoice($Caption, $Message, $choicedesc, [Math]::Max( $Default, $choicedesc.Count - 1))
+        [int] $index = $Host.UI.PromptForChoice($Caption, $Message, $choicedesc,
+            [Math]::Max( $Default, $choicedesc.Count - 1))
         if ($ReturnKey) { $choicedesc[$index].Label } else { $index }
     }
 }
