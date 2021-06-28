@@ -8,7 +8,13 @@ filter Get-OutputType {
     .EXAMPLE
         (Get-OutputType {}) -eq $null
     .EXAMPLE
-        { [OutputType([String])] param ([System.IO.FileInfo] $File) $File.BaseName }, {[OutputType([Int])] param() $r} | Get-OutputType
+        {
+            [OutputType([String])]
+            param (
+                [System.IO.FileInfo] $File
+            )
+            $File.BaseName
+        }, {[OutputType([Int])] param() $r} | Get-OutputType
     .EXAMPLE
         Get-Command Check-Parameter | Get-OutputType
     #>

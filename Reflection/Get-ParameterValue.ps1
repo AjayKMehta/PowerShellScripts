@@ -5,8 +5,12 @@ function Get-ParameterValue {
     .SYNOPSIS
         Helper function to get values for all parameters.
     .DESCRIPTION
-        Helper function to get values for all parameters. Apply to $PSCmdlet.MyInvocation.MyCommand to get all parameter values for the current command.
-        If a parameter was passed in, it will also be in $PSBoundParameters. If a parameter is optional and there's no default value specified for it, then it will be included and its value will be the default value for the parameter type.
+        Helper function to get values for all parameters. Apply to
+        $PSCmdlet.MyInvocation.MyCommand to get all parameter values for the
+        current command. If a parameter was passed in, it will also be in
+        $PSBoundParameters. If a parameter is optional and there's no default
+        value specified for it, then it will be included and its value will be
+        the default value for the parameter type.
     .EXAMPLE
         function foo {
             [CmdletBinding()]
@@ -100,7 +104,9 @@ function Get-ParameterValue {
             } else {
                 # All cmdlet parameters with default values will exist as variables inside cmdlet.
                 $var = Get-Variable $name -ErrorAction Ignore -Scope 1 # Parent scope
-                if ($var) { $params[$name] = $var.Value } else {
+                if ($var) {
+                    $params[$name] = $var.Value
+                } else {
                     Write-Verbose "$name was not passed to command and does not have a default value."
                 }
             }

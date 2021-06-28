@@ -6,7 +6,8 @@ function Decode-Unicode {
     .DESCRIPTION
         Converts Unicode escape sequences in InputObject to Unicode characters.
     .PARAMETER InputObject
-        The string whose Unicode escape sequences you wish to convert to Unicode characters. Can take input from pipeline.
+        The string whose Unicode escape sequences you wish to convert to Unicode
+        characters. Can take input from pipeline.
     .NOTES
         Not tested thoroughly. Use with caution!
     .OUTPUTS
@@ -28,7 +29,7 @@ function Decode-Unicode {
     )
 
     begin {
-        $regex = New-Object Regex @("\\u(?<Value>[a-f0-9]+)", ([RegexOptions]::Compiled -bor [RegexOptions]::IgnoreCase))
+        $regex = New-Object Regex @('\\u(?<Value>[a-f0-9]+)', ([RegexOptions]::Compiled -bor [RegexOptions]::IgnoreCase))
     }
 
     process {
@@ -38,7 +39,9 @@ function Decode-Unicode {
         } else {
             $inputText = $InputObject.ToString()
         }
-        $regex.Replace($inputText, { param ($m) ([char]([int]::Parse($m.groups["Value"].Value, [System.Globalization.NumberStyles]::HexNumber))).ToString() })
+        $regex.Replace($inputText,
+            {
+                param ($m) ([char]([int]::Parse($m.groups['Value'].Value, [System.Globalization.NumberStyles]::HexNumber))).ToString() })
     }
 
     end { $regex = $null }

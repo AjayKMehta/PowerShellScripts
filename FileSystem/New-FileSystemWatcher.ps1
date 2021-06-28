@@ -6,7 +6,8 @@ function New-FileSystemWatcher {
     .DESCRIPTION
         Helper function for creating dynamic parameters.
     .NOTES
-        The FileSystemWatcher will not watch the specified directory until the Path property has been set and EnableRaisingEvents is true.
+        The FileSystemWatcher will not watch the specified directory until the
+        Path property has been set and EnableRaisingEvents is true.
     .EXAMPLE
         $fsw = New-FileSystemWatcher 'C:\temp' -Enable -Recurse
         $fsw.NotifyFilter += 'LastAccess'
@@ -65,7 +66,9 @@ function New-FileSystemWatcher {
 
         [Parameter(Mandatory = $false)]
         # Types of changes to watch for
-        [NotifyFilters] $NotifyFilter = [NotifyFilters]::LastWrite -bor [NotifyFilters]::FileName -bor [NotifyFilters]::DirectoryName,
+        [NotifyFilters] $NotifyFilter = [NotifyFilters]::LastWrite -bor
+                                        [NotifyFilters]::FileName -bor
+                                        [NotifyFilters]::DirectoryName,
 
         # If set, enable events.
         [switch] $Enable,
