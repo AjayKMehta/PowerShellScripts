@@ -19,7 +19,9 @@ function Parse-Value {
     param
     (
         [string] $Value,
-        [ValidateScript( { $_ -in [bool], [byte], [uint16], [uint32], [uint64], [int16], [int], [long], [float], [decimal], [double], [datetime], [guid] })]
+        [ValidateScript( { $_ -in [bool], [byte], [uint16], [uint32], [uint64],
+                [int16], [int], [long], [float], [decimal], [double], [datetime],
+                [guid] })]
         [Type] $Type,
         [switch] $ValueOnly
     )
@@ -29,6 +31,6 @@ function Parse-Value {
     if ($ValueOnly) {
         $result
     } else {
-        New-Object psobject -Property @{"IsParsed" = $success; "Value" = $result }
+        New-Object psobject -Property @{'IsParsed' = $success; 'Value' = $result }
     }
 }

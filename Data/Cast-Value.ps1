@@ -56,7 +56,7 @@ function Cast-Value {
 
             $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
             $paramDictionary.Add('KeyField', $dynamicParam)
-            return $paramDictionary
+            $paramDictionary
         }
     }
 
@@ -74,8 +74,8 @@ function Cast-Value {
                     $InputObject.$property = $parseInfo.Value
                 } else {
                     $exception = [System.InvalidCastException]::new()
-                    @{"Record#" = $ctr; "Value" = $origValue; "Field" = $property; "Type" = $type }.GetEnumerator() |
-                    ForEach-Object { $exception.data.Add($_.Key, $_.Value) }
+                    @{'Record#' = $ctr; 'Value' = $origValue; 'Field' = $property; 'Type' = $type }.GetEnumerator() |
+                        ForEach-Object { $exception.data.Add($_.Key, $_.Value) }
 
                     if ($origValue -is [string]) { $origValue = "`"$origValue`"" }
                     [string] $KeyField = $null
