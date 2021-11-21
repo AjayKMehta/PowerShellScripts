@@ -10,6 +10,8 @@ function Get-GitAttributes {
         [string]$Language
     )
     process {
-        Invoke-RestMethod "https://raw.githubusercontent.com/alexkaratarakis/gitattributes/master/$Language.gitattributes"
+        $null = $PSBoundParameters.Remove('Language')
+        [uri] $url = "https://raw.githubusercontent.com/alexkaratarakis/gitattributes/master/$Language.gitattributes"
+        Invoke-RestMethod -Uri $url @PSBoundParameters
     }
 }

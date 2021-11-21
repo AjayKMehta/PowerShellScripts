@@ -10,10 +10,11 @@ function Get-GitIgnore {
         [string]$Language
     )
     process {
+        $null = $PSBoundParameters.Remove('Language')
         if ($Language -eq 'VisualStudioCode') {
-            Invoke-RestMethod 'https://raw.githubusercontent.com/github/gitignore/master/Global/VisualStudioCode.gitignore'
+            Invoke-RestMethod 'https://raw.githubusercontent.com/github/gitignore/master/Global/VisualStudioCode.gitignore' @PSBoundParameters
         } else {
-            Invoke-RestMethod "https://raw.githubusercontent.com/github/gitignore/master/$Language.gitignore"
+            Invoke-RestMethod "https://raw.githubusercontent.com/github/gitignore/master/$Language.gitignore" @PSBoundParameters
         }
     }
 }
