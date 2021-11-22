@@ -11,10 +11,14 @@ Dockerfile text
 *.dll binary
 
 # PowerShell
-*.ps1 text
-*.psm1 text
-*.psd1 text
-*.ps1xml text
+*.ps1      text eol=crlf
+*.ps1x     text eol=crlf
+*.psm1     text eol=crlf
+*.psd1     text eol=crlf
+*.ps1xml   text eol=crlf
+*.pssc     text eol=crlf
+*.psrc     text eol=crlf
+*.cdxml    text eol=crlf
 
 # Python
 *.pxd text diff=python
