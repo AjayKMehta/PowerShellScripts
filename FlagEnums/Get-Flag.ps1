@@ -1,3 +1,5 @@
+using namespace System.Collections
+
 function Get-Flag {
     <#
     .SYNOPSIS
@@ -5,18 +7,20 @@ function Get-Flag {
     .DESCRIPTION
         Returns all bit fields that are set for input enum value.
     .PARAMETER EnumValue
-        The value for which you wish to check bit fields. Type must be a flag enum (enum that has FlagsAttribute marked) or error will occur.
+        The value for which you wish to check bit fields.
+        Type must be a flag enum (enum that has FlagsAttribute marked) or error will occur.
     .PARAMETER Show
         This can take one of 3 values: All, Compound or NoCompound.
-        If All, it will check all possible values of enum to see if they are set. This may result in superfluous values if the enum has compound values defined (combination of 2 or more enum values).
+        If All, it will check all possible values of enum to see if they are set.
+        This may result in superfluous values if the enum has compound values defined
+        (Compound value is a combination of 2 or more enum values).
 
         If Compound is specified, compound values are NOT broken into their constituent values.
 
         If NoCompound is specified, compound values are excluded from the return value.
-    .NOTES
-        Due to a bug in the PowerShell cmdlet Sort-Object, this will return only 1 enum value when there is more than 1 value with same underlying numeric value (see last example for demonstration).
     .EXAMPLE
-        ([System.Security.AccessControl.FileSystemRights]"Traverse"),[System.Security.AccessControl.FileSystemRights]::FullControl  | Get-Flag
+        ([System.Security.AccessControl.FileSystemRights]'Traverse'),
+        [System.Security.AccessControl.FileSystemRights]::FullControl  | Get-Flag
     .EXAMPLE
         enum MyEnum {
             None = 0
@@ -42,7 +46,6 @@ function Get-Flag {
 
         $y = [MyEnum2]::Both
         Get-Flag $y
-        # Due to a bug in Sort-Object, only 'Uno' is shown in the results below instead of both 'Uno' and 'One'.
         Get-Flag $y -Show 'NoCompound'
         Get-Flag $y -Show 'All'
     #>
@@ -65,7 +68,7 @@ function Get-Flag {
 
         if ($EnumValue -eq 0) {
             if ($values[-1] -eq 0) {
-                $result = [System.Collections.ArrayList]::new(1)
+                $result = [ArrayList]::new(1)
                 $result.Add($EnumValue)
             }
         } else {
@@ -74,7 +77,7 @@ function Get-Flag {
 
             [int] $check = [int] $EnumValue
             $eValue = $EnumValue
-            $result = [System.Collections.ArrayList]::new($values.Count)
+            $result = [ArrayList]::new($values.Count)
             foreach ($value in $values) {
                 [int] $val = [int] $value
                 if ($noCompound -and !(Test-Integer ([Math]::Log($val, 2)))) {

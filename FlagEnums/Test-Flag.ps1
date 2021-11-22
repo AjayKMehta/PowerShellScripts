@@ -1,7 +1,8 @@
 function Test-Flag {
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidLongLines', Justification = 'Need for example code')]
     <#
     .SYNOPSIS
-        Returns true if EnumValue has any or all flag values.
+        Returns true if EnumValue has any (or all) flag values.
     .DESCRIPTION
         Determines whether all (any of) the bit fields in Values are set in EnumValue.
         If EnumValue's type is not an Enum type with FlagsAttribute set, then the function will throw an error.
@@ -9,7 +10,8 @@ function Test-Flag {
         Instance of flag enum. If type is not an enum with FlagSAttribute set, then the function will throw an error!
     .PARAMETER Values
         Bit fields to check if set in EnumValue. Can be enum values, strings or numbers.
-        Code will attempt to coerce the latter two to enum values and if it fails to convert any value, function will return false.
+        Code will attempt to coerce the latter two to enum values.
+        If it fails to convert any value, function will return false.
     .PARAMETER Check
         Either All or Any. If All, then will check if all bit fields in Values are set in EnumValue else will check any.
     .EXAMPLE

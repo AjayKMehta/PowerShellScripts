@@ -98,7 +98,6 @@ function Import-DataTable {
                     continue
                 }
                 Write-Verbose "Processing line $i of $file"
-                Write-Debug "line $i of $($file): $line"
                 if (!$hasHeader) {
                     foreach ($col in $vals) {
                         $null = $result.Columns.Add(($col))
