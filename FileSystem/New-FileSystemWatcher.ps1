@@ -67,8 +67,8 @@ function New-FileSystemWatcher {
         [Parameter(Mandatory = $false)]
         # Types of changes to watch for
         [NotifyFilters] $NotifyFilter = [NotifyFilters]::LastWrite -bor
-                                        [NotifyFilters]::FileName -bor
-                                        [NotifyFilters]::DirectoryName,
+        [NotifyFilters]::FileName -bor
+        [NotifyFilters]::DirectoryName,
 
         # If set, enable events.
         [switch] $Enable,

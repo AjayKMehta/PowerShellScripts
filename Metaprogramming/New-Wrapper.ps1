@@ -1,7 +1,9 @@
 using namespace System.Collections.Generic
 using namespace System.Management.Automation
+using namespace System.Diagnostics.CodeAnalysis
 
 function New-Wrapper {
+    [SuppressMessageAttribute('UseShouldProcessForStateChangingFunctions')]
     <#
     .SYNOPSIS
        Helps construct wrapper functions for creating instances of .NET and PowerShell classes.
@@ -80,7 +82,7 @@ function New-Wrapper {
 
         [ValidateScript(
             {
-                if ($_.IsAbstract) { throw "Type cannot be abstract." }
+                if ($_.IsAbstract) { throw 'Type cannot be abstract.' }
                 return $true
             })
         ]
@@ -104,9 +106,11 @@ function New-Wrapper {
     )
     dynamicparam {
         if ($PSBoundParameters.ContainsKey('UseDefaultConstructor')) {
-            $paramAttrib = New-ParameterAttribute -ParameterSetName 'DefaultCons' -HelpMessage 'If specified, prompt the user to select properties.'
+            $paramAttrib = New-ParameterAttribute -ParameterSetName 'DefaultCons' `
+                -HelpMessage 'If specified, prompt the user to select properties.'
 
-            $dynamicParam = New-DynamicParameter -Name 'ChooseProperties' -Type ([SwitchParameter]) -Attribute $paramAttrib
+            $dynamicParam = New-DynamicParameter -Name 'ChooseProperties' `
+                -Type ([SwitchParameter]) -Attribute $paramAttrib
 
             $paramDictionary = [RuntimeDefinedParameterDictionary]::new()
             $paramDictionary.Add('ChooseProperties', $dynamicParam)
@@ -129,14 +133,14 @@ function New-Wrapper {
                 throw "No public default constructor exists for $_"
             }
             $properties = $Type.GetProperties().Where( { $_.SetMethod -and $_.CanWrite }) |
-            Select-Object Name, PropertyType
+                Select-Object Name, PropertyType
 
             if ($properties) {
                 $choose = $false
                 if ($PSBoundParameters.TryGetValue('ChooseProperties', [ref] $choose) -and $choose) {
                     $properties = $properties | Out-GridView -PassThru -Title 'Select properties'
                     if (!$properties) {
-                        throw "Operation canceled."
+                        throw 'Operation canceled.'
                     }
                 }
             }
@@ -174,15 +178,15 @@ function New-Wrapper {
                 throw "$($Type.Name) has no public instance constructors"
             } elseif ($constructors.Count -eq 1) {
                 $cons = $constructors[0] |
-                Select-Object @{Name = 'Signature'; Expression = { $_.ToString() } },
-                @{Name = 'Params'; Expression = { $_.GetParameters() } }
+                    Select-Object @{Name = 'Signature'; Expression = { $_.ToString() } },
+                    @{Name = 'Params'; Expression = { $_.GetParameters() } }
             } else {
                 $cons = $constructors |
-                Select-Object @{Name = 'Signature'; Expression = { $_.ToString() } },
-                @{Name = 'Params'; Expression = { $_.GetParameters() } } |
-                Out-GridView -PassThru
+                    Select-Object @{Name = 'Signature'; Expression = { $_.ToString() } },
+                    @{Name = 'Params'; Expression = { $_.GetParameters() } } |
+                    Out-GridView -PassThru
                 if (!$cons) {
-                    throw "Operation canceled."
+                    throw 'Operation canceled.'
                 }
             }
 
