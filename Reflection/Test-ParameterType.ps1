@@ -12,7 +12,7 @@ function Test-ParameterType {
         Test-ParameterType { param ([int32] $a, [string] $b) } @('System.Int32', 'System.String')
     #>
     [Outputtype([bool])]
-    [CmdletBinding(DefaultParametersetName = "ExpectedTypes")]
+    [CmdletBinding(DefaultParametersetName = 'ExpectedTypes')]
     param
     (
         [Parameter(Mandatory = $true, Position = 0)]
@@ -20,18 +20,18 @@ function Test-ParameterType {
         [scriptblock]
         $ScriptBlock,
 
-        [Parameter(ParameterSetName = "ExpectedTypes", Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'ExpectedTypes', Mandatory = $true, Position = 1)]
         [ValidateNotNull()]
         [Type[]]
         $ExpectedTypes,
 
         # Array of expected type names
-        [Parameter(ParameterSetName = "TypeNames", Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'TypeNames', Mandatory = $true, Position = 1)]
         [ValidateNotNull()]
         [string[]]
         $TypeNames
     )
-    if ($PSCmdlet.ParameterSetName -eq "TypeNames") {
+    if ($PSCmdlet.ParameterSetName -eq 'TypeNames') {
         $ExpectedTypes = $TypeNames.ForEach( { [Type]::GetType($_, $true) })
     }
 

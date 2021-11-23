@@ -21,7 +21,7 @@ Function New-DynamicParameter {
     )
 
     $AttributeCollection = [Collections.ObjectModel.Collection[System.Attribute]]::new()
-    foreach($attrib in $Attribute) {
+    foreach ($attrib in $Attribute) {
         $AttributeCollection.Add($attrib)
     }
 

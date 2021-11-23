@@ -60,11 +60,11 @@ function Remove-DuplicateModule {
             [int] $count = $group.Count
 
             $items = Select-Object -InputObject $group -ExpandProperty Group |
-            Sort-Object @{Expression = "Version"; Descending = !$KeepOld }, @{Expression = "Scope"; Descending = $PreferCurrentUser }
+                Sort-Object @{Expression = 'Version'; Descending = !$KeepOld }, @{Expression = 'Scope'; Descending = $PreferCurrentUser }
             Write-Verbose "Keeping $($group.Name) in $($items[0].Path)"
             for ([int] $i = 1; $i -lt $count; $i++) {
                 $folder = Split-Path $items[$i].Path -Parent
-                if ($PSCmdlet.ShouldProcess($folder, "Delete directory")) {
+                if ($PSCmdlet.ShouldProcess($folder, 'Delete directory')) {
                     delete-folder $folder
                 }
             }
@@ -72,7 +72,7 @@ function Remove-DuplicateModule {
     } else {
         $dupeCounts = $groups | ConvertTo-Hashtable -KeyField Name -ValueField Count
 
-        $toDelete = $dupes | Out-GridView -Title "Select modules to delete" -PassThru
+        $toDelete = $dupes | Out-GridView -Title 'Select modules to delete' -PassThru
         if (!$toDelete) {
             return
         }
@@ -80,17 +80,17 @@ function Remove-DuplicateModule {
         # Validate selection
         $inUse = $toDelete | Where-Object InUse
         if ($inUse) {
-            $message = "Cannot delete the following modules in use: {0}." -f ($inUse.Name -Join ', ')
+            $message = 'Cannot delete the following modules in use: {0}.' -f ($inUse.Name -Join ', ')
             Write-Error $message -Category InvalidOperation
         } else {
             $deleteAll = $toDelete | Group-Object Name | Where-Object { $_.Count -eq $dupeCounts[$_.Name] }
             if ($deleteAll) {
-                $message = "You must keep at least 1 version of the following modules: {0}." -f ($deleteAll.Name -Join ', ')
+                $message = 'You must keep at least 1 version of the following modules: {0}.' -f ($deleteAll.Name -Join ', ')
                 Write-Error $message -Category InvalidOperation
             } else {
                 foreach ($mod in $toDelete) {
                     $folder = Split-Path $mod.Path -Parent
-                    if ($PSCmdlet.ShouldProcess($folder, "Delete directory")) {
+                    if ($PSCmdlet.ShouldProcess($folder, 'Delete directory')) {
                         delete-folder $folder
                     }
                 }

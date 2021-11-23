@@ -16,7 +16,7 @@ function New-ParameterAttribute {
     (
         [switch] $Mandatory,
         [int] $Position,
-        [string] $ParameterSetName = "__AllParameterSets",
+        [string] $ParameterSetName = '__AllParameterSets',
         [switch] $ValueFromPipeline,
         [switch] $ValueFromPipelineByPropertyName,
         [switch] $ValueFromRemainingArguments,

@@ -42,13 +42,13 @@ function Get-DefaultParameterValue {
     switch ($PSCmdlet.ParameterSetName) {
         'ScriptBlock' {
             $ScriptBlock.Ast.ParamBlock.Parameters |
-            Where-Object DefaultValue |
-            Select-Object Name, DefaultValue
+                Where-Object DefaultValue |
+                Select-Object Name, DefaultValue
         }
         'Command' {
             $Command.ScriptBlock.Ast.Body.ParamBlock.Parameters |
-            Where-Object DefaultValue |
-            Select-Object Name, DefaultValue
+                Where-Object DefaultValue |
+                Select-Object Name, DefaultValue
         }
     }
 }
