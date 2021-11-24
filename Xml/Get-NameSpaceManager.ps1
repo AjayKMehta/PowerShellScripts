@@ -39,16 +39,18 @@ filter Get-NamespaceManager {
         $nsm.GetNamespacesInScope([System.Xml.XmlNamespaceScope]::Local)
     #>
     [OutputType([Xml.XmlNamespaceManager])]
-    [Cmdletbinding()]
+    [Cmdletbinding(DefaultParameterSetName = 'Default')]
     param
     (
         [ValidateNotNull()]
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Default', Position = 0)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Pipeline', ValueFromPipeline = $true)]
         [Alias('Xml')]
         [Xml] $XmlDocument,
 
-        [ValidateNotNullorEmpty()]
-        [Parameter(Mandatory = $false, Position = 1)]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Default', Position = 1)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Pipeline', Position = 0)]
         [Alias('Prefix')]
         [string] $DefaultPrefix = 'ns',
 

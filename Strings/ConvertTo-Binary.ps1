@@ -16,13 +16,15 @@ filter ConvertTo-Binary {
         http://stackoverflow.com/questions/6285722/c-sharp-binary-to-string?lq=1
     #>
     [OutputType([string])]
-    [CmdletBinding(PositionalBinding = $false)]
+    [CmdletBinding(DefaultParameterSetName = 'Default', PositionalBinding = $false)]
     param
     (
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Default', Position = 0)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Pipeline', ValueFromPipeline = $true)]
         [string] $InputString,
 
-        [Parameter(Mandatory = $false, Position = 1)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Default', Position = 1)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Pipeline', Position = 0)]
         [System.Text.Encoding] $Encoding = [System.Text.Encoding]::Default
     )
     # 8 bc 1 byte = 8 bits.
