@@ -1,10 +1,12 @@
+using namespace System.Diagnostics.CodeAnalysis
 function Remove-DuplicateModule {
     <#
     .SYNOPSIS
         Delete (directories for) duplicate modules.
     .DESCRIPTION
         Delete (directories for) duplicate modules based on either user selection (if Choose set) or algorithm.
-        In case of duplicate modules, algorithm will keep the module with the highest version (lowest if KeepOld is set). If there is a tie in version, then it will keep the module in AllUsers module folder unless PreferCurrentUser is set.
+        In case of duplicate modules, algorithm will keep the module with the highest version (lowest if KeepOld is set).
+        If there is a tie in version, then it will keep the module in AllUsers module folder unless PreferCurrentUser is set.
     .NOTES
         Code only checks CurrentUser and AllUsers module folders.
 
@@ -30,6 +32,7 @@ function Remove-DuplicateModule {
         [switch] $PreferCurrentUser,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'Choose')]
+        [SuppressMessageAttribute('PSReviewUnusedParamater')]
         #If set, show form with duplicate modules and allow user to choose which to delete.
         [switch] $Choose,
 

@@ -10,12 +10,18 @@ filter ConvertFrom-Binary {
         $s = ConvertTo-Binary -InputString 'hello' -Encoding ([System.Text.Encoding]::Unicode)
         ConvertFrom-Binary $s ([System.Text.Encoding]::Unicode)
     .EXAMPLE
-        'p' | ConvertTo-Binary -Encoding ([System.Text.Encoding]::Unicode) | ConvertFrom-Binary -Encoding ([System.Text.Encoding]::Unicode)
+        'p' |
+            ConvertTo-Binary -Encoding ([System.Text.Encoding]::Unicode) |
+            ConvertFrom-Binary -Encoding ([System.Text.Encoding]::Unicode)
     .EXAMPLE
         # This is OK
-        'Δ' | ConvertTo-Binary -Encoding ([System.Text.Encoding]::Unicode) | ConvertFrom-Binary -Encoding ([System.Text.Encoding]::Unicode)
+        'Δ' |
+        ConvertTo-Binary -Encoding ([System.Text.Encoding]::Unicode) |
+        ConvertFrom-Binary -Encoding ([System.Text.Encoding]::Unicode)
         # ASCII can't handle given text!
-        'Δ' | ConvertTo-Binary -Encoding ([System.Text.Encoding]::Unicode) | ConvertFrom-Binary -Encoding ([System.Text.Encoding]::ASCII)
+        'Δ' |
+            ConvertTo-Binary -Encoding ([System.Text.Encoding]::Unicode) |
+            ConvertFrom-Binary -Encoding ([System.Text.Encoding]::ASCII)
     #>
     [OutputType([string])]
     [CmdletBinding(PositionalBinding = $false)]
@@ -32,7 +38,7 @@ filter ConvertFrom-Binary {
     # 8 bc 1 byte = 8 bits.
     $bytes =
     for ($i = 0; $i -lt $InputString.length; $i += 8) {
-        [System.Convert]::Toint32($InputString.Substring($i, 8), 2)
+        [System.Convert]::ToInt32($InputString.Substring($i, 8), 2)
     }
 
     $Encoding.GetString($bytes)

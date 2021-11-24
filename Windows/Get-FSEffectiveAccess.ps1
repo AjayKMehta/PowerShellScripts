@@ -49,20 +49,20 @@ function Get-FSEffectiveAccess {
         $show = if ($NoCompound) { 'NoCompound' } else { 'Compound' }
 
         $groups = Get-FSAccessRule -Path $Path -Principal $Principal |
-        ForEach-Object {
-            $flags = Get-Flag $_.FileSystemRights -Show $show
+            ForEach-Object {
+                $flags = Get-Flag $_.FileSystemRights -Show $show
 
-            # Flatten structure
-            foreach ($flag in $flags) {
-                [pscustomobject] @{
-                    "FileSystemRights"  = $flag
-                    "AccessControlType" = $_.AccessControlType
-                    "IsInherited"       = $_.IsInherited
+                # Flatten structure
+                foreach ($flag in $flags) {
+                    [pscustomobject] @{
+                        'FileSystemRights'  = $flag
+                        'AccessControlType' = $_.AccessControlType
+                        'IsInherited'       = $_.IsInherited
+                    }
                 }
-            }
-        } | # Non-inherited rules take precedence over inherited rules and Deny over Allow
-        Sort-Object FileSystemRights, IsInherited, @{Expression = { $_.AccessControlType }; Ascending = $false } -Unique |
-        Group-Object FileSystemRights
+            } | # Non-inherited rules take precedence over inherited rules and Deny over Allow
+            Sort-Object FileSystemRights, IsInherited, @{Expression = { $_.AccessControlType }; Ascending = $false } -Unique |
+            Group-Object FileSystemRights
         $ht = @{}
         foreach ($group in $groups) {
             $first = $group.Group | Select-Object -First 1

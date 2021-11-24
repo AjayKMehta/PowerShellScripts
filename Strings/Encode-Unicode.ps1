@@ -40,7 +40,7 @@ filter Encode-Unicode {
             $val = $_
             # Non-ASCII
             if (($value = [int]$_) -gt 127) {
-                $val = "\u$($value.ToString("x4"))"
+                $val = "\u$($value.ToString('x4'))"
             }
             $null = $sb.Append($val)
         })
