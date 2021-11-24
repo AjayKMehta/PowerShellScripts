@@ -19,18 +19,19 @@ function Import-DataTable {
     param
     (
         [ValidatePathExists(PathType = 'Leaf')]
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Default', Position = 0)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Pipeline', ValueFromPipeline = $true)]
         [Alias('PSPath', 'File')]
         # This must be the path to a file. Wildcards are not supported.
         [string] $LiteralPath,
 
         [ValidateNotNullOrEmpty()]
-        [Parameter(Mandatory = $false, Position = 1, ParameterSetName = 'Default')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Default', Position = 1)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Pipeline', Position = 0)]
         [Alias('Separator')]
         # Uses the list separator for the current culture as the item delimiter.
         [string[]] $Delimiter = ',',
 
-        [Parameter(ParameterSetName = 'Culture')]
         # Uses the list separator for the current culture as the item delimiter.
         [switch] $UseCulture,
 
@@ -92,19 +93,19 @@ function Import-DataTable {
         [int] $i = 0
         while (!$reader.EndOfData) {
             try {
-                $vals = $reader.ReadFields()
+                [string[]] $values = $reader.ReadFields()
                 $i++
                 if ($i -le $Skip) {
                     continue
                 }
                 Write-Verbose "Processing line $i of $file"
                 if (!$hasHeader) {
-                    foreach ($col in $vals) {
+                    foreach ($col in $values) {
                         $null = $result.Columns.Add(($col))
                     }
                     $hasHeader = $true
                 } else {
-                    $null = $result.Rows.Add($vals)
+                    $null = $result.Rows.Add($values)
                 }
             } catch [MalformedLineException] {
                 $PSCmdlet.ThrowTerminatingError($_)

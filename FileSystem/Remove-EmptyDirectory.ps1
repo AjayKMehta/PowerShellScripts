@@ -19,16 +19,22 @@ function Remove-EmptyDirectory {
     .EXAMPLE
         gci "D:\temp\*\*" -Directory | Remove-EmptyDirectory -Recurse -WhatIf
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding(DefaultParameterSetName = 'Default', SupportsShouldProcess = $true)]
     param
     (
         [SupportsWildcards()]
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Default', Position = 0)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Pipeline',
+            ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [Alias('PSPath')]
         [string[]] $Path,
+
+        [Parameter(Mandatory = $false, ParameterSetName = 'Default', Position = 1)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Pipeline', Position = 0)]
         [string] $Filter,
+
         [switch] $Recurse,
+
         [switch] $Force
     )
     begin {

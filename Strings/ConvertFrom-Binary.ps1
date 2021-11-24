@@ -24,15 +24,17 @@ filter ConvertFrom-Binary {
             ConvertFrom-Binary -Encoding ([System.Text.Encoding]::ASCII)
     #>
     [OutputType([string])]
-    [CmdletBinding(PositionalBinding = $false)]
+    [CmdletBinding(DefaultParameterSetName = 'Default', PositionalBinding = $false)]
     param
     (
         [ValidateNotNull()]
         [ValidateScript( { ($_.Length % 8) -eq 0 })]
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Default', Position = 0)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Pipeline', ValueFromPipeline = $true)]
         [string] $InputString,
 
-        [Parameter(Mandatory = $false, Position = 1)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Default', Position = 1)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Pipeline', Position = 0)]
         [System.Text.Encoding] $Encoding = [System.Text.Encoding]::Default
     )
     # 8 bc 1 byte = 8 bits.

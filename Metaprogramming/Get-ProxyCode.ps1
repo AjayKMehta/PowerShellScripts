@@ -18,7 +18,8 @@ function Get-ProxyCode {
         [System.String]
         $Name,
 
-        [Parameter(Mandatory = $true, ParameterSetName = 'Command', Position = 0, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Command', Position = 0)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'CommandPipeline', ValueFromPipeline = $true)]
         [CommandInfo]
         $Command
     )

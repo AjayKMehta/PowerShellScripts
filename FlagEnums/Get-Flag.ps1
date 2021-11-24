@@ -22,6 +22,7 @@ function Get-Flag {
         ([System.Security.AccessControl.FileSystemRights]'Traverse'),
         [System.Security.AccessControl.FileSystemRights]::FullControl  | Get-Flag
     .EXAMPLE
+        [Flags()]
         enum MyEnum {
             None = 0
             One = 1
@@ -34,8 +35,7 @@ function Get-Flag {
         Get-Flag $x -Show 'NoCompound'
         Get-Flag $x -Show 'All'
     .EXAMPLE
-
-    [Flags()]
+        [Flags()]
         enum MyEnum2 {
             None = 0
             One = 1
@@ -49,15 +49,17 @@ function Get-Flag {
         Get-Flag $y -Show 'NoCompound'
         Get-Flag $y -Show 'All'
     #>
-    [CmdletBinding(PositionalBinding = $false)]
+    [CmdletBinding(DefaultParameterSetName = 'Default', PositionalBinding = $false)]
     param
     (
         [ValidateScript( { Test-FlagEnum ($_.GetType()) })]
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Default', Position = 0)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Pipeline', ValueFromPipeline = $true)]
         $EnumValue,
 
         [ValidateSet('All', 'Compound', 'NoCompound')]
-        [Parameter(Mandatory = $false, Position = 1)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Default', Position = 1)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Pipeline', Position = 0)]
         [string] $Show = 'Compound'
     )
     process {

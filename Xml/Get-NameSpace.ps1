@@ -57,22 +57,27 @@ filter Get-Namespace {
     param
     (
         [ValidateNotNull()]
-        [Parameter(Mandatory = $true, ParameterSetName = 'Node', Position = 0, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Node', Position = 0)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'NodePipeline', ValueFromPipeline = $true)]
         [System.Xml.XmlNode] $Node,
 
         [ValidateNotNull()]
-        [Parameter(Mandatory = $true, ParameterSetName = 'XNode', Position = 0, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'XNode', Position = 0)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'XNodePipeline', ValueFromPipeline = $true)]
         [System.Xml.Linq.XNode] $XNode,
 
         [ValidateNotNullorEmpty()]
-        [Parameter(Mandatory = $false, Position = 1)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Node', Position = 1)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'NodePipeline', Position = 0)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'XNode', Position = 1)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'XNodePipeline', Position = 0)]
         [Alias('Prefix')]
         [string] $DefaultPrefix = 'ns',
 
         [switch] $Unique
     )
     $nsPrefixes =
-    if ($PSCmdlet.ParameterSetName -eq 'Node') {
+    if ($PSCmdlet.ParameterSetName -like 'Node*') {
         $Node.SelectNodes('//namespace::*[not(. = ../../namespace::*)]') |
             Select-Object LocalName, Value
     } else {
