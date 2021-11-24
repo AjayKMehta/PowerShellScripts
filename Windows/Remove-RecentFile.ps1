@@ -1,3 +1,5 @@
+using namespace System.Management.Automation
+
 function Remove-RecentFile {
     <#
     .SYNOPSIS
@@ -10,7 +12,11 @@ function Remove-RecentFile {
     .EXAMPLE
         Remove-RecentFile -WhatIf -MinDate '5/31/2020'
     #>
-    [CmdletBinding(DefaultParameterSetName = 'Default', PositionalBinding = $false, SupportsShouldProcess = $True, ConfirmImpact = 'High')]
+    [CmdletBinding(
+        DefaultParameterSetName = 'Default',
+        PositionalBinding = $false,
+        SupportsShouldProcess = $True,
+        ConfirmImpact = 'High')]
     param
     (
         [switch] $Force,
@@ -24,16 +30,19 @@ function Remove-RecentFile {
         [datetime]$MinDate
     )
 
-    $PSBoundParameters["Confirm"] = $false
-    $PSBoundParameters["WhatIf"] = $false
-    $PSBoundParameters["Verbose"] = $false
+    foreach ($param in [Cmdlet]::OptionalCommonParameters) {
+        $null = $PSBoundParameters.Remove($param)
+    }
+    foreach ($param in [Cmdlet]::CommonParameters) {
+        $null = $PSBoundParameters.Remove($param)
+    }
 
     if ($Force -and -not $Confirm) {
         $ConfirmPreference = 'None'
     }
 
     $shell = New-Object -Com Shell.Application
-    $recent = [Environment]::GetFolderPath("Recent")
+    $recent = [Environment]::GetFolderPath('Recent')
 
     if ($PSCmdlet.ParameterSetName -eq 'Default') {
         $null = $PSBoundParameters.Remove('All')
@@ -48,11 +57,11 @@ function Remove-RecentFile {
     }
 
     $shell.Namespace($recent).Items() |
-    Where-Object $sb |
-    ForEach-Object {
-        if ($PSCmdlet.ShouldProcess($_.Path, "Remove shortcut")) {
-            Remove-Item -LiteralPath $_.Path @PsBoundParameters;
+        Where-Object $sb |
+        ForEach-Object {
+            if ($PSCmdlet.ShouldProcess($_.Path, 'Remove shortcut')) {
+                Remove-Item -LiteralPath $_.Path @PsBoundParameters;
+            }
         }
-    }
     $null = [System.Runtime.Interopservices.Marshal]::ReleaseComObject($shell)
 }
