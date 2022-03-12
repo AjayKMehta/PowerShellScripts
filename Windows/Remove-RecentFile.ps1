@@ -6,7 +6,8 @@ function Remove-RecentFile {
         Deletes shortcuts in Recent folder based on specified criterion.
     .DESCRIPTION
         Deletes shortcuts in Recent folder. If All is set, then it will delete all shortcuts.
-        If MinDate is specified, it will delete all links older than MinDate. If neither MinDate or All is specified, it will delete dead shortcuts.
+        If MinDate is specified, it will delete all links older than MinDate.
+        If neither MinDate or All is specified, it will delete dead shortcuts.
     .EXAMPLE
         Remove-RecentFile -WhatIf
     .EXAMPLE
