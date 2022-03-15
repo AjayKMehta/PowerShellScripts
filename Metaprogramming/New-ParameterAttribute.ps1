@@ -9,7 +9,7 @@ function New-ParameterAttribute {
     .EXAMPLE
         New-ParameterAttribute -Position 1 -ValueFromPipeline
     .LINK
-        https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.parameterattribute?view=powershellsdk-7.0.0
+0        https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.parameterattribute
     #>
     [OutputType([Parameter])]
     param

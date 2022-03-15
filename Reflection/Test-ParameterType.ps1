@@ -2,7 +2,7 @@
 function Test-ParameterType {
     <#
     .SYNOPSIS
-       Returns true if all the parameters of the scriptblock match the inputed types.
+       Returns true if all the parameters of the scriptblock match the inputted types.
     .EXAMPLE
         $sb = { param ([int] $x, [bool] $flag)  if ($flag) {$x} else {-1} }
         Test-ParameterType $sb ([System.IO.FileInfo])

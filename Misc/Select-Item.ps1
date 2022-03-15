@@ -46,9 +46,9 @@ function Select-Item {
         [Parameter(ParameterSetName = 'Hashtable', Mandatory = $true, Position = 0)]
         [ValidateNotNull()]
         [hashtable] $ChoiceMap,
-        [ValidateNotNullorEmpty()]
+        [ValidateNotNullOrEmpty()]
         [String] $Caption = 'Please make a selection',
-        [ValidateNotNullorEmpty()]
+        [ValidateNotNullOrEmpty()]
         [String] $Message = 'Choices are presented below',
         [uint64] $Default = 0,
         [switch] $ReturnKey
