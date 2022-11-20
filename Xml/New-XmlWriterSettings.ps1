@@ -58,7 +58,7 @@ function New-XmlWriterSettings {
         [NamespaceHandling] $NamespaceHandling = [NamespaceHandling]::Default,
 
         [Alias('nlc')]
-        [string] $NewLineChars = "`r`n",
+        [string] $NewLineChars = [System.Environment]::NewLine,
 
         [Alias('nlh')]
         [NewLineHandling] $NewLineHandling = [NewLineHandling]::Replace,
