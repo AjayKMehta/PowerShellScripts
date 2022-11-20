@@ -113,7 +113,11 @@ function Import-DataTable {
         }
         $numLines = if ($Skip -gt $i) { 0 } else { $i - $Skip }
         Write-Verbose "Read $numLines lines of $file"
+        if ($reader) { $reader.Dispose() }
         # Add comma before so PowerShell doesn't convert to Object[]!
         , $result
+    }
+    clean {
+        if ($reader) { $reader.Dispose() }
     }
 }
