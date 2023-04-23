@@ -57,7 +57,7 @@ Dockerfile text
 *.md       text diff=markdown linguist-detectable
 
 # Data
-*.csv      filter=lfs diff=lfs merge=lfs
+*.csv      filter=lfs diff=lfs merge=lfs eol=crlf
 *.xls*     filter=lfs diff=lfs merge=lfs
 *.hdf5     filter=lfs diff=lfs merge=lfs
 
