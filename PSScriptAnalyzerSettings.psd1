@@ -1,38 +1,17 @@
+# https://learn.microsoft.com/en-us/powershell/utility-modules/psscriptanalyzer/rules/readme?view=ps-modules
 @{
-    IncludeRules = @(
+    IncludeDefaultRules = $true
+    IncludeRules        = @(
         'PSAlignAssignmentStatement',
-        'PSAvoidAssignmentToAutomaticVariable',
-        'PSAvoidDefaultValueForMandatoryParameter',
-        'PSAvoidDefaultValueSwitchParameter',
-        'PSAvoidGlobalVars',
-        'PSAvoidGlobalFunctions',
         'PSAvoidLongLines',
-        'PSAvoidNullOrEmptyHelpMessageAttribute',
-        'PSAvoidShouldContinueWithoutForce',
-        'PSAvoidTrailingWhitespace',
         'PSAvoidUsingDoubleQuotesForConstantString',
-        'PSAvoidUsingEmptyCatchBlock',
-        'PSAvoidUsingPlainTextForPassword',
-        'PSAvoidUsingPositionalParameters',
-        'PSAvoidUsingUsernameAndPasswordParams',
         'PSPlaceOpenBrace',
         'PSPlaceCloseBrace',
-        'PSPossibleIncorrectComparisonWithNull',
-        'PSPossibleIncorrectUsageOfAssignmentOperator',
-        'PSReservedCmdletChar',
-        'PSReservedParams',
-        'PSReviewUnusedParameter',
-        'PSShouldProcess',
         'PSUseConsistentIndentation',
-        'PSUseCorrectCasing',
-        'PSUseDeclaredVarsMoreThanAssignments',
-        'PSUsePSCredentialType',
-        'PSUseProcessBlockForPipelineCommand',
-        'PSUseShouldProcessForStateChangingFunctions',
-        'PSUseUsingScopeModifierInNewRunspaces'
+        'PSUseCorrectCasing'
     )
 
-    Rules        = @{
+    Rules               = @{
         PSAlignAssignmentStatement = @{
             Enable         = $true
             CheckHashtable = $true
@@ -57,8 +36,10 @@
             NoEmptyLineBefore  = $false
         }
 
+
+
         PSUseCompatibleCmdlets     = @{
-            compatibility = @('core-6.1.0-windows')
+            compatibility = @('core-6.1.0-windows', 'core-6.1.0-linux')
         }
 
         PSUseConsistentIndentation = @{
@@ -66,6 +47,14 @@
             IndentationSize     = 4
             PipelineIndentation = 'IncreaseIndentationForFirstPipeline'
             Kind                = 'space'
+        }
+
+        PSUseCompatibleSyntax      = @{
+            Enable         = $true
+            TargetVersions = @(
+                '7.2',
+                '6.0'
+            )
         }
     }
 }
