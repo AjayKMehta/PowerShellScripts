@@ -66,7 +66,7 @@ filter Get-Namespace {
         [Parameter(Mandatory = $true, ParameterSetName = 'XNodePipeline', ValueFromPipeline = $true)]
         [System.Xml.Linq.XNode] $XNode,
 
-        [ValidateNotNullorEmpty()]
+        [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory = $false, ParameterSetName = 'Node', Position = 1)]
         [Parameter(Mandatory = $false, ParameterSetName = 'NodePipeline', Position = 0)]
         [Parameter(Mandatory = $false, ParameterSetName = 'XNode', Position = 1)]
