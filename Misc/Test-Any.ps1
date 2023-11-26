@@ -16,6 +16,7 @@ function Test-Any {
     .EXAMPLE
         Test-Any $null {param($x) $x % 3 -eq 0}
     #>
+    [OutputType([bool])]
     param
     (
         $Values,
@@ -28,5 +29,5 @@ function Test-Any {
             return $true
         }
     }
-    return $false
+    $false
 }

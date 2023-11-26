@@ -14,6 +14,7 @@ function Test-All {
     .EXAMPLE
         Test-All @("a","b") {param($s) $s.Length -eq 1 }
     #>
+    [OutputType([bool])]
     param
     (
         $Values,
@@ -26,5 +27,5 @@ function Test-All {
             return $false
         }
     }
-    return $true
+    $true
 }
