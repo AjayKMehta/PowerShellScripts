@@ -4,13 +4,16 @@ function Remove-DuplicateModule {
     .SYNOPSIS
         Delete (directories for) duplicate modules.
     .DESCRIPTION
-        Delete (directories for) duplicate modules based on either user selection (if Choose set) or algorithm.
-        In case of duplicate modules, algorithm will keep the module with the highest version (lowest if KeepOld is set).
-        If there is a tie in version, then it will keep the module in AllUsers module folder unless PreferCurrentUser is set.
+        Delete (directories for) duplicate modules based on either user
+        selection (if Choose set) or algorithm. In case of duplicate modules,
+        algorithm will keep the module with the highest version (lowest if
+        KeepOld is set). If there is a tie in version, then it will keep the
+        module in AllUsers module folder unless PreferCurrentUser is set.
     .NOTES
         Code only checks CurrentUser and AllUsers module folders.
 
-        After user chooses modules to delete (if Choose is set), the following checks are made:
+        After user chooses modules to delete (if Choose is set), the following
+        checks are made:
         1. If a module selected is in use, then show an error.
         2. If all versions of a module are selected, then show an error.
 
@@ -32,7 +35,6 @@ function Remove-DuplicateModule {
         [switch] $PreferCurrentUser,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'Choose')]
-        [SuppressMessageAttribute('PSReviewUnusedParamater')]
         #If set, show form with duplicate modules and allow user to choose which to delete.
         [switch] $Choose,
 
@@ -59,11 +61,15 @@ function Remove-DuplicateModule {
     }
     $groups = $dupes | Group-Object Name
     if ($PSCmdlet.ParameterSetName -eq 'Default') {
+        $props = @(
+            @{Expression = 'Version'; Descending = !$KeepOld },
+            @{Expression = 'Scope'; Descending = $PreferCurrentUser }
+        )
         foreach ($group in $groups) {
             [int] $count = $group.Count
 
             $items = Select-Object -InputObject $group -ExpandProperty Group |
-                Sort-Object @{Expression = 'Version'; Descending = !$KeepOld }, @{Expression = 'Scope'; Descending = $PreferCurrentUser }
+                Sort-Object -Property $props
             Write-Verbose "Keeping $($group.Name) in $($items[0].Path)"
             for ([int] $i = 1; $i -lt $count; $i++) {
                 $folder = Split-Path $items[$i].Path -Parent
@@ -88,7 +94,8 @@ function Remove-DuplicateModule {
         } else {
             $deleteAll = $toDelete | Group-Object Name | Where-Object { $_.Count -eq $dupeCounts[$_.Name] }
             if ($deleteAll) {
-                $message = 'You must keep at least 1 version of the following modules: {0}.' -f ($deleteAll.Name -Join ', ')
+                $message = 'You must keep at least 1 version of the following modules: {0}.'
+                $message = $message -f ($deleteAll.Name -Join ', ')
                 Write-Error $message -Category InvalidOperation
             } else {
                 foreach ($mod in $toDelete) {

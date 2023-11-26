@@ -5,7 +5,8 @@ filter Encode-Unicode {
     .DESCRIPTION
         Converts Unicode characters in InputObject to Unicode escape sequences.
     .PARAMETER InputObject
-        The string whose Unicode characters you wish to convert to Unicode escape sequences. Can take input from pipeline.
+        The string whose Unicode characters you wish to convert to Unicode
+        escape sequences. Can take input from pipeline.
     .NOTES
         Not tested thoroughly. Use with caution!
     .OUTPUTS

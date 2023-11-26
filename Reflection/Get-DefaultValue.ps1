@@ -5,7 +5,8 @@ function Get-DefaultValue {
     #>
     param
     (
-        [ValidateScript( { $_ -in [bool], [byte], [uint16], [uint32], [uint64], [int16], [int], [long], [float], [decimal], [double], [datetime], [guid], [string] })]
+        [ValidateScript( { $_ -in [bool], [byte], [uint16], [uint32],
+                [uint64], [int16], [int], [long], [float], [decimal], [double], [datetime], [guid], [string] })]
         [Type] $Type
     )
 
