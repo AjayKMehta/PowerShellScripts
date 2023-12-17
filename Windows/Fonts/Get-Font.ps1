@@ -22,7 +22,16 @@ function Get-Font {
         [bool] $isUser = $Type -eq 'User'
         $drive = $isUser ? 'HKCU:' : 'HKLM:'
         $excluded = 'PSChildName', 'PSDrive', 'PSParentPath', 'PSPath', 'PSProvider'
-        $predicate = $Name ? { $_.Name -NotIn $excluded -and $_.Name.SubString(0, $_.Name.LastIndexof(' ')) -like $Name } : { $_.Name -NotIn $excluded}
+        $predicate = if ($Name) {
+            {
+                # Font is <Font Family> <Style> (<FontType>).
+                $index = $_.Name.LastIndexof(' ')
+                $check = ($index -eq -1) ? $_.Name : $_.Name.SubString(0, $index)
+                $_.Name -NotIn $excluded -and $check -like $Name
+            }
+        } else {
+            { $_.Name -NotIn $excluded }
+        }
     }
     process {
         Get-ItemProperty "$drive\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts" |
