@@ -20,10 +20,11 @@ function Get-Font {
     )
     begin {
         [bool] $isUser = $Type -eq 'User'
-        $predicate = $Name ? { $_.Name.SubString(0, $_.Name.LastIndexof(' ')) -like $Name } : { $_.Name -NotIn 'PSChildName', 'PSDrive', 'PSParentPath', 'PSPath', 'PSProvider' }
+        $drive = $isUser ? 'HKCU:' : 'HKLM:'
+        $excluded = 'PSChildName', 'PSDrive', 'PSParentPath', 'PSPath', 'PSProvider'
+        $predicate = $Name ? { $_.Name -NotIn $excluded -and $_.Name.SubString(0, $_.Name.LastIndexof(' ')) -like $Name } : { $_.Name -NotIn $excluded}
     }
     process {
-        $drive = $isUser ? 'HKCU:' : 'HKLM:'
         Get-ItemProperty "$drive\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts" |
             Get-Member -MemberType NoteProperty |
             Where-Object $predicate |
