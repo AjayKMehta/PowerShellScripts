@@ -6,7 +6,7 @@ function Uninstall-Font {
     (
         [Alias('Name')]
         [ValidateNotNullOrEmpty()]
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [string] $FontName,
 
         [ValidateSet('User', 'Machine')]
