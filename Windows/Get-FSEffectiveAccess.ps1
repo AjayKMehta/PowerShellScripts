@@ -61,7 +61,9 @@ function Get-FSEffectiveAccess {
                     }
                 }
             } | # Non-inherited rules take precedence over inherited rules and Deny over Allow
-            Sort-Object FileSystemRights, IsInherited, @{Expression = { $_.AccessControlType }; Ascending = $false } -Unique |
+            Sort-Object FileSystemRights, IsInherited, @{
+                Expression = { $_.AccessControlType }; Ascending = $false
+            } -Unique |
             Group-Object FileSystemRights
         $ht = @{}
         foreach ($group in $groups) {
