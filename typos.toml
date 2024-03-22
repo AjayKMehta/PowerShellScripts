@@ -1,0 +1,19 @@
+[default]
+    check-filename = false
+    unicode = true
+
+[files]
+    extend-exclude = [
+        "typos.toml",
+        "**/.git*",
+        "*.csv",
+        "*.js",
+        "**/package-lock.json",
+        "**/node-modules/**",
+        "**/vscodeextension/**",
+        "**/.git/objects/**",
+        "**/.vscode/**",
+        "**/.vscode-insiders/**",
+        "**/.tmp-projections/**",
+        "**/*.interactive"
+    ]
