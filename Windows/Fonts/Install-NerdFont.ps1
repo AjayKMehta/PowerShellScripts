@@ -58,6 +58,7 @@ function Install-NerdFont {
             'Overpass',
             'ProFont',
             'ProggyClean',
+            'Recursive',
             'RobotoMono',
             'ShareTechMono',
             'SourceCodePro',
@@ -66,6 +67,8 @@ function Install-NerdFont {
             'Tinos',
             'Ubuntu',
             'UbuntuMono',
+            'UbuntuSans',
+            'ZedMono',
             'VictorMono'
         )]
         [string] $FontName,
