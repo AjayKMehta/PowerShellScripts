@@ -1,7 +1,7 @@
 ﻿function ConvertFrom-UnixTime {
     <#
     .SYNOPSIS
-        Converts a UNIX timestap to DateTime.
+        Converts a UNIX timestamp to DateTime.
     .DESCRIPTION
         Converts a UNIX timestamp to DateTime.
         UNIX timestamp is number of seconds since Jan. 1, 1970.
