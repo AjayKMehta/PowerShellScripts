@@ -1,11 +1,11 @@
 # https://github.com/actions/labeler
-":construction_worker: CICD":
+"👷 CICD":
   - changed-files:
     - any-glob-to-any-file:
       - .github/workflows/*
-      - .github/labeler.yml
+      - .github/*.yml
 
-"Documentation :memo:":
+"📝 Documentation":
   - changed-files:
-  - any-glob-to-any-file:
-    - README.md
+    - any-glob-to-any-file:
+      - '*.md'
