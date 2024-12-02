@@ -11,7 +11,7 @@ jobs:
       - name: Automatically update PR
         uses: adRise/update-pr-branch@v0.9.1
         with:
-          # Add secret here: https://github.com/AjayKMehta/Dappery/settings/secrets/actions
+          # Add secret here: https://github.com/AjayKMehta/PowerShellScripts/settings/secrets/actions
           token: ${{ secrets.ACTION_USER_TOKEN }}
           base: 'master'
           required_approval_count: 0
