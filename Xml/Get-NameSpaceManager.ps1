@@ -7,7 +7,7 @@ filter Get-NamespaceManager {
         parsing all nodes with namespace prefixes. If a namespace is mapped to
         more than one prefix, it will only use the first if -Unique is set. If a
         prefix is used more than once in a document, it will only use the first
-        one and create dummy prefixes for subsequent occurences.
+        one and create dummy prefixes for subsequent occurrences.
     .PARAMETER XmlDocument
         The document for which you need a namespace manager.
     .PARAMETER DefaultPrefix

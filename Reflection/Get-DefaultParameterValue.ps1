@@ -1,6 +1,6 @@
 function Get-DefaultParameterValue {
     <#
-    .SYNPOSIS
+    .SYNOPSIS
         Returns name and default value for parameters of given command or
         scriptblock.
     .DESCRIPTION

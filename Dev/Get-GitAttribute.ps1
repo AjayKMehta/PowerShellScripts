@@ -1,7 +1,7 @@
 function Get-GitAttributes {
     <#
     .EXAMPLE
-        'R', 'Python' | Get-GitAttributes | Add-Content '.\.gitatributes'
+        'R', 'Python' | Get-GitAttributes | Add-Content '.\.gitattributes'
     #>
     [CmdletBinding()]
     param (
