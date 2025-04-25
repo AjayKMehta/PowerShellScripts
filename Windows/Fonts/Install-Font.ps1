@@ -42,7 +42,9 @@ function Install-Font {
         if ($PSCmdlet.ShouldProcess($fontPath, "Install font with font name '$fontName'")) {
             $installPath = Join-Path $installFolder $FontFile.Name
 
-            if ($Clobber -or !(Test-Path $installPath)) {
+            $installed = Test-Path $installPath -PathType Leaf
+
+            if ($Clobber -or !$installed) {
                 Copy-Item -Path $fontPath -Destination $installPath -Force @PSBoundParameters -WhatIf:$false
 
                 if ($?) {
@@ -59,7 +61,7 @@ function Install-Font {
                         New-ItemProperty @newItemPropertySplat @PSBoundParameters -WhatIf:$false | Out-Null
                     }
                 }
-            } else {
+            } elseif ($installed) {
                 Write-Verbose "Font $fontPath is already installed."
             }
         }
