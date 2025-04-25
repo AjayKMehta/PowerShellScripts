@@ -5,9 +5,11 @@ function Install-NerdFont {
         [ValidateSet(
             '0xProto',
             '3270',
+            'AdwaitaMono',
             'Agave',
             'AnonymousPro',
             'Arimo',
+            'AtkinsonHyperlegibleMono',
             'AurulentSansMono',
             'BigBlueTerminal',
             'BitstreamVeraSansMono',
@@ -69,8 +71,8 @@ function Install-NerdFont {
             'Ubuntu',
             'UbuntuMono',
             'UbuntuSans',
-            'ZedMono',
-            'VictorMono'
+            'VictorMono',
+            'ZedMono'
         )]
         [string] $FontName,
 
