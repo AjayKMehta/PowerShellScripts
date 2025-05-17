@@ -1,6 +1,12 @@
 [default]
     check-filename = false
     unicode = true
+    extend-ignore-re = [
+        "(?s)^.*?`[^`]+`.*$",
+        "(?Rm)^.*(#|//)\\s*spellchecker:disable-line$",
+        "(?s)(#|//)\\s*spellchecker:off.*?\\n\\s*(#|//)\\s*spellchecker:on",
+        "[A-Za-z]+://\\S{3,50}:(\\S{8,50})@[\\dA-Za-z#%&+./:=?_~-]+",
+    ]
 
 [files]
     extend-exclude = [
