@@ -7,7 +7,7 @@ filter Get-FullPath {
     )
 
     foreach ($pathItem in $Path) {
-        if ($pathItem -eq 'C:') {
+        if ($pathItem -match '[A-Z]:\\?') {
             $pathItem
         } else {
             # Can't use Convert-Path because it will fail if input path does not exist!
