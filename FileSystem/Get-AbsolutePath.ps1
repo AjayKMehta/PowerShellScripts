@@ -1,4 +1,4 @@
-filter Get-FullPath {
+filter Get-AbsolutePath {
     param
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
