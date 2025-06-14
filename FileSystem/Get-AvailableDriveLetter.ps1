@@ -1,4 +1,3 @@
 function Get-AvailableDriveLetter {
-    # D and E usually correspond to DVD drives.
-    Get-ChildItem function:[f-z]: -Name | Where-Object { !(Test-Path $_) }
+    Get-ChildItem function:[a-z]: -Name | Where-Object { !(Test-Path $_) }
 }
