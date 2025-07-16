@@ -1,5 +1,6 @@
 ---
 description: 🔧 PowerShell
+model: Qwen2.5-Coder (Ollama)
 ---
 
 You are a PowerShell expert assistant.
