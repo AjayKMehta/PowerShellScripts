@@ -18,11 +18,14 @@ concurrency:
 
 jobs:
   triage:
+    name: Label Merge Conflicts
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       # https://github.com/marketplace/actions/auto-label-merge-conflicts
-      - uses: mschilde/auto-label-merge-conflicts@master
+      - id: label-merge-conflict
+        name: Label merge conflict
+        uses: mschilde/auto-label-merge-conflicts@master
         with:
           CONFLICT_LABEL_NAME: "💥 Conflicts"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
