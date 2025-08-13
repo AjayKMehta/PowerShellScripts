@@ -8,7 +8,7 @@
         # Ignore next line
         ".*(#|--|//).*(spellchecker|typos):\\s?ignore-next-line[^\\n]*\\n[^\\n]*",
         # Line block
-        "(?s)(#|--|//)\\s*(spellchecker|typos):off.*?\\n\\s*\\1\\s*\\2:on",
+        "(?s)(#|--|//)\\s*(spellchecker|typos):off.*?\\n\\s*(#|--|//)\\s*(spellchecker|typos):on",
         "[A-Za-z]+://\\S{3,50}:(\\S{8,50})@[\\dA-Za-z#%&+./:=?_~-]+",
     ]
 
