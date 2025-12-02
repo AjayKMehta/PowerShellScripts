@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Automatically update PR
-        uses: adRise/update-pr-branch@v0.9.1
+        uses: adRise/update-pr-branch@v0.10.2
         with:
           # Add secret here: https://github.com/AjayKMehta/PowerShellScripts/settings/secrets/actions
           token: ${{ secrets.ACTION_USER_TOKEN }}
