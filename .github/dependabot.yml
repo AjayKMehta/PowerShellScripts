@@ -20,8 +20,8 @@ updates:
     groups:
       actions-dependencies:
         update-types:
-          - "major"
-          - "minor"
-          - "patch"
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
     labels:
       - "⬆️ Dependencies"
