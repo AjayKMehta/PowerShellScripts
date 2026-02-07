@@ -1,0 +1,12 @@
+# https://docs.zizmor.sh/configuration/
+
+rules:
+  dependabot-cooldown:
+    config:
+      days: 3
+  undocumented-permissions:
+    disable: true
+  unpinned-uses:
+    config:
+      policies:
+        "*": hash-pin

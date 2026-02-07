@@ -3,17 +3,37 @@ name: Update PR
 on:
   push:
     branches:
-      - 'master'
+      - master
+
+concurrency:
+  # github.event.pull_request.number || github.ref: pull request number or branch name if not a pull request
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CHECK_PERMISSIONS: 0
+
+permissions: {}
+
 jobs:
-  autoupdate:
+  update-pr:
+    name: Update PR branch automatically
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # Need to update PR
+      pull-requests: write # Need to update PR
     steps:
-      - name: Automatically update PR
-        uses: adRise/update-pr-branch@v0.10.2
+      - id: check-permissions
+        name: Check action permissions
+        uses: GitHubSecurityLab/actions-permissions/monitor@bf82d13b9b10051d224345ab9184f5ede0a94289 # v1.0.2-beta9
+        if: env.CHECK_PERMISSIONS == '1'
+      - id: update-pr
+        name: Update PR
+        uses: adRise/update-pr-branch@a51c014567e5be98445551cce9b8f5ad42dd8acf # v0.10.2
         with:
-          # Add secret here: https://github.com/AjayKMehta/PowerShellScripts/settings/secrets/actions
           token: ${{ secrets.ACTION_USER_TOKEN }}
-          base: 'master'
+          base: master
           required_approval_count: 0
           require_passed_checks: true
           require_auto_merge_enabled: false

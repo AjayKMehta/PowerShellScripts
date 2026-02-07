@@ -1,33 +1,38 @@
-name: "Label merge conflicts"
+name: Label merge conflicts
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
 
-permissions:
-  contents: read
-  pull-requests: write
-
-# https://www.meziantou.net/how-to-cancel-github-workflows-when-pushing-new-commits-on-a-branch.htm
 concurrency:
   # github.event.pull_request.number || github.ref: pull request number or branch name if not a pull request
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+env:
+  CHECK_PERMISSIONS: 0
+
+permissions: {}
 
 jobs:
-  triage:
+  label-conflicts:
     name: Label Merge Conflicts
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write # Need to label PR
     steps:
+      - id: check-permissions
+        name: Check action permissions
+        uses: GitHubSecurityLab/actions-permissions/monitor@bf82d13b9b10051d224345ab9184f5ede0a94289 # v1.0.2-beta9
+        if: env.CHECK_PERMISSIONS == '1'
       # https://github.com/marketplace/actions/auto-label-merge-conflicts
       - id: label-merge-conflict
         name: Label merge conflict
-        uses: mschilde/auto-label-merge-conflicts@master
+        uses: mschilde/auto-label-merge-conflicts@591722e97f3c4142df3eca156ed0dcf2bcd362bd # master
         with:
-          CONFLICT_LABEL_NAME: "💥 Conflicts"
+          CONFLICT_LABEL_NAME: 💥 Conflicts
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAX_RETRIES: 5
           WAIT_MS: 5000

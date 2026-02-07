@@ -4,40 +4,60 @@ on:
   push:
   workflow_dispatch:
 
-permissions:
-  actions: write
-  contents: read
-  pull-requests: write
-
-# https://www.meziantou.net/how-to-cancel-github-workflows-when-pushing-new-commits-on-a-branch.htm
 concurrency:
   # github.event.pull_request.number || github.ref: pull request number or branch name if not a pull request
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
+env:
+  CHECK_PERMISSIONS: 0
+
+permissions: {}
+
 jobs:
   pre_job:
     name: Check for Duplicate Actions
     runs-on: ubuntu-latest
+    permissions:
+      actions: write # Need to check/cancel actions.
     # Map a step output to a job output
     outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+      should_skip: ${{ steps.check-duplicate-actions.outputs.should_skip }}
     steps:
-      - id: skip_check
-        uses: fkirc/skip-duplicate-actions@v5
+      - id: check-permissions
+        name: Check action permissions
+        uses: GitHubSecurityLab/actions-permissions/monitor@bf82d13b9b10051d224345ab9184f5ede0a94289 # v1.0.2-beta9
+        if: env.CHECK_PERMISSIONS == '1'
+      - id: check-duplicate-actions
+        name: Check for duplicate actions
+        uses: fkirc/skip-duplicate-actions@f75f66ce1886f00957d99748a42c724f4330bdcf # v5.3.1
         with:
           cancel_others: 'true'
           skip_after_successful_duplicate: 'true'
           concurrent_skipping: same_content_newer
-  scan:
+  scan-secrets:
     name: Scan for secrets
     needs: pre_job
     if: needs.pre_job.outputs.should_skip != 'true'
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - id: check-permissions
+        name: Check action permissions
+        uses: GitHubSecurityLab/actions-permissions/monitor@bf82d13b9b10051d224345ab9184f5ede0a94289 # v1.0.2-beta9
+        if: env.CHECK_PERMISSIONS == '1'
+      - id: checkout-repo
+        name: Checkout repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
+          persist-credentials: false
+      - id: detect-secrets
+        name: Detect secrets
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_NOTIFY_USER_LIST: "@AjayKMehta"
