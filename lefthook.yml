@@ -1,0 +1,35 @@
+assert_lefthook_installed: true
+source_dir: .lefthook/
+
+output:
+  - meta # Print lefthook version
+  - summary # Print summary block (successful and failed steps)
+  # - empty_summary  # Print summary heading when there are no steps to run
+  - success # Print successful steps
+  - failure # Print failed steps printing
+  - execution # Print any execution logs
+  - execution_out # Print execution output
+  - execution_info # Print `EXECUTE > ...` logging
+  - skips # Print "skip" (i.e. no files matched)
+
+pre-commit:
+  parallel: true
+  fail_on_changes: ci
+  fail_on_changes_diff: true
+  skip:
+    - merge
+    - merge-commit
+    - rebase
+
+remotes:
+  - git_url: https://github.com/AjayKMehta/lefthook.git
+    ref: v1.0.3
+    configs:
+      - /hooks/commit-msg/run-typos.yml
+      - /hooks/pre-commit/lint-actions.yml
+      - /hooks/pre-commit/lint-json.yml
+      - /hooks/pre-commit/lint-markdown.yml
+      - /hooks/pre-commit/lint-toml.yml
+      - /hooks/pre-commit/lint-vscode.yml
+      - /hooks/pre-commit/lint-yaml.yml
+      - /hooks/pre-push/detect-secrets.yml
