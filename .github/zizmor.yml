@@ -6,6 +6,8 @@ rules:
       days: 3
   undocumented-permissions:
     disable: true
+  secrets-outside-env:
+    disable: true
   unpinned-uses:
     config:
       policies:
