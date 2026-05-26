@@ -26,10 +26,10 @@ remotes:
     ref: v3.4.0
     configs:
       - /hooks/commit-msg/run-typos.yml
+      - /hooks/pre-commit/detect-secrets.yml
       - /hooks/pre-commit/lint-actions.yml
       - /hooks/pre-commit/lint-json.yml
       - /hooks/pre-commit/lint-markdown.yml
       - /hooks/pre-commit/lint-toml.yml
       - /hooks/pre-commit/lint-vscode.yml
       - /hooks/pre-commit/lint-yaml.yml
-      - /hooks/pre-push/detect-secrets.yml
