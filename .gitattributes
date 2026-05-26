@@ -84,6 +84,9 @@ Dockerfile text
 # Other
 *.exe      filter=lfs diff=lfs merge=lfs -text
 
+# Configuration
+*.toml     text eol=lf
+
 # VS Code
 .vscode/*.json linguist-language=JSON-with-Comments
 
