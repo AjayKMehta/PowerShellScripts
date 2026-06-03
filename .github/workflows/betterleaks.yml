@@ -1,4 +1,4 @@
-name: gitleaks
+name: betterleaks
 on:
   pull_request:
   push:
@@ -44,6 +44,7 @@ jobs:
       actions: write
       contents: read
       pull-requests: write
+      security-events: read
     steps:
       - id: check-permissions
         name: Check action permissions
@@ -55,9 +56,19 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - id: detect-secrets
+      - id: betterleaks
         name: Detect secrets
-        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        uses: dortort/betterleaks-action@cd0b905aa4befb8f42f8b1ab98150180c9e77515 # v0.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_NOTIFY_USER_LIST: "@AjayKMehta"
+          fail-on-leak: 'true'
+          redact: 'true'
+          # Auto-mode: git scan on push, dir scan on PR
+          scan-mode: auto
+      - id: upload-results
+        name: Upload betterleaks results
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: betterleaks-report
+          path: ${{ steps.betterleaks.outputs.report-path }}

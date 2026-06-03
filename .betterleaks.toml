@@ -1,0 +1,20 @@
+title = "Betterleaks"
+
+# minVersion indicates the minimum gitleaks config format version required.
+# betterleaksMinVersion indicates the minimum betterleaks version required.
+# If the running version is older, a warning will be logged.
+minVersion = "v8.25.0"
+betterleaksMinVersion = "v1.3.0"
+
+prefilter = '''
+matchesAny(attributes[?"path"].orValue(""), [
+r"""(?:^|/)\.env$""",
+r"""^artifacts(?:/.*)?""",
+r"""(?:^|/).*cache$""",
+r"""(?:^|/).*img$""",
+r"""(?:^|/).*\.vs$"""
+])
+'''
+
+[extend]
+useDefault = true
