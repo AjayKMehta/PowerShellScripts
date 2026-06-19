@@ -14,7 +14,7 @@ function Get-ChildProcess {
         Based on https://reddit.com/r/PowerShell/comments/dncycf/how_to_do_i_start_and_stop_a_process_and_its/
     #>
     [CmdletBinding(DefaultParameterSetName = 'Id', PositionalBinding = $false)]
-    Param (
+    param (
         [Parameter(Mandatory = $true, ParameterSetName = 'Id', ValueFromPipelineByPropertyName = $true)]
         # Id of the process
         [int[]] $Id,

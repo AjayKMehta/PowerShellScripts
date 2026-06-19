@@ -32,10 +32,10 @@ function Get-Font {
                 # Font is <Font Family> <Style> (<FontType>).
                 $index = $_.Name.LastIndexOf(' ')
                 $check = ($index -eq -1) ? $_.Name : $_.Name.SubString(0, $index)
-                $_.Name -NotIn $excluded -and $check -like $Name
+                $_.Name -notin $excluded -and $check -like $Name
             }
         } else {
-            { $_.Name -NotIn $excluded }
+            { $_.Name -notin $excluded }
         }
         Get-ItemProperty $regPath |
             Get-Member -MemberType NoteProperty |

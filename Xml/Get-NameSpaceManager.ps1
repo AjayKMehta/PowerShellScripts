@@ -38,7 +38,7 @@ filter Get-NamespaceManager {
         $nsm = $xmlDoc | Get-NameSpaceManager -DefaultPrefix 'ns' -Unique
         $nsm.GetNamespacesInScope([System.Xml.XmlNamespaceScope]::Local)
     #>
-    [OutputType([Xml.XmlNamespaceManager])]
+    [OutputType([Xml.XmlNamespaceManager[]])]
     [Cmdletbinding(DefaultParameterSetName = 'Default')]
     param
     (
@@ -58,11 +58,11 @@ filter Get-NamespaceManager {
     )
 
     [Xml.XmlNamespaceManager] $xmlNsManager = [Xml.XmlNamespaceManager]::new($XmlDocument.NameTable)
-    [int] $ctr = 0;
+    [int] $ctr = 0
 
     $XmlDocument.SelectNodes('//namespace::*[not(. = ../../namespace::*)]') |
         ForEach-Object {
-            $prefix, $nsURI = $_.LocalName, $_.Value ;
+            $prefix, $nsURI = $_.LocalName, $_.Value
             [bool] $add = $true
 
             if ($Unique) {
@@ -84,5 +84,5 @@ filter Get-NamespaceManager {
 
     # Need to put the comma before the variable name so that PowerShell doesn't
     # convert it into an Object[].
-    , $xmlNsManager
+    [Xml.XmlNamespaceManager[]](, $xmlNsManager)
 }
