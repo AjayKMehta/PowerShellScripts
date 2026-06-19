@@ -23,8 +23,8 @@ filter ConvertTo-Binary {
         [Parameter(Mandatory = $true, ParameterSetName = 'Pipeline', ValueFromPipeline = $true)]
         [string] $InputString,
 
-        [Parameter(Mandatory = $true, ParameterSetName = 'Default', Position = 1)]
-        [Parameter(Mandatory = $true, ParameterSetName = 'Pipeline', Position = 0)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Default', Position = 1)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Pipeline', Position = 0)]
         [System.Text.Encoding] $Encoding = [System.Text.Encoding]::Default
     )
     # 8 bc 1 byte = 8 bits.

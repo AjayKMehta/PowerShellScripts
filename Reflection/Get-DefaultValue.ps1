@@ -15,6 +15,6 @@ function Get-DefaultValue {
         ([bool]) { $false }
         ([guid]) { [guid]::Empty }
         ([string]) { $null }
-        Default { 0 }
+        default { 0 }
     }
 }

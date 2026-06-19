@@ -24,6 +24,7 @@ function Remove-DuplicateModule {
         Remove-DuplicateModule -WhatIf
     #>
     [CmdletBinding(DefaultParameterSetName = 'Default', SupportsShouldProcess = $true, ConfirmImpact = 'High')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '', Justification = 'OK.')]
     param (
         [Parameter(Mandatory = $false, ParameterSetName = 'Default')]
         #If true, it will keep the oldest version for a given module.
@@ -89,13 +90,13 @@ function Remove-DuplicateModule {
         # Validate selection
         $inUse = $toDelete | Where-Object InUse
         if ($inUse) {
-            $message = 'Cannot delete the following modules in use: {0}.' -f ($inUse.Name -Join ', ')
+            $message = 'Cannot delete the following modules in use: {0}.' -f ($inUse.Name -join ', ')
             Write-Error $message -Category InvalidOperation
         } else {
             $deleteAll = $toDelete | Group-Object Name | Where-Object { $_.Count -eq $dupeCounts[$_.Name] }
             if ($deleteAll) {
                 $message = 'You must keep at least 1 version of the following modules: {0}.'
-                $message = $message -f ($deleteAll.Name -Join ', ')
+                $message = $message -f ($deleteAll.Name -join ', ')
                 Write-Error $message -Category InvalidOperation
             } else {
                 foreach ($mod in $toDelete) {

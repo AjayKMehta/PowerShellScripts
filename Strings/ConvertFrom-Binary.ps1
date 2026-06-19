@@ -1,4 +1,4 @@
-filter ConvertFrom-Binary {
+﻿filter ConvertFrom-Binary {
     <#
     .SYNOPSIS
         Converts input string in binary format to a string with given encoding .
