@@ -23,5 +23,6 @@ function Get-FSAccessRule {
     process {
         (Get-Acl -Path $Path -ea Stop).Access |
             Where-Object { $Principal.IsInRole($_.IdentityReference) }
+
     }
 }
