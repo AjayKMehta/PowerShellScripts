@@ -1,4 +1,4 @@
-filter Encode-Unicode {
+﻿filter Encode-Unicode {
     <#
     .SYNOPSIS
         Converts Unicode characters in InputObject to Unicode escape sequences.
@@ -40,7 +40,7 @@ filter Encode-Unicode {
         {
             $val = $_
             # Non-ASCII
-            if (($value = [int]$_) -gt 127) {
+            if ((($value = [int]$_) -gt 127)) {
                 $val = "\u$($value.ToString('x4'))"
             }
             $null = $sb.Append($val)

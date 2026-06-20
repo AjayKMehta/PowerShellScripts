@@ -20,7 +20,8 @@ function Get-FSAccessRule {
         [Parameter(Mandatory = $false, Position = 0)]
         [System.Security.Principal.WindowsPrincipal] $Principal = (Get-CurrentUser)
     )
-
-    (Get-Acl -Path $Path -ea Stop).Access |
-        Where-Object { $Principal.IsInRole($_.IdentityReference) }
+    process {
+        (Get-Acl -Path $Path -ea Stop).Access |
+            Where-Object { $Principal.IsInRole($_.IdentityReference) }
+    }
 }

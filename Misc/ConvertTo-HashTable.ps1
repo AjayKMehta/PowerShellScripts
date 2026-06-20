@@ -10,7 +10,7 @@ function ConvertTo-Hashtable {
     [CmdletBinding(PositionalBinding = $false)]
     [Alias()]
     [OutputType([Hashtable])]
-    Param (
+    param (
         # Param1 help description
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [ValidateNotNull()]

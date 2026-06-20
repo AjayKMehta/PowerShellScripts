@@ -34,6 +34,7 @@ function Get-FSEffectiveAccess {
         "C:\temp" | Get-FSEffectiveAccess
     #>
     [CmdletBinding(PositionalBinding = $false)]
+    [OutputType([hashtable], ParameterSetName = 'HashTable')]
     param
     (
         [SupportsWildCards()]
@@ -41,6 +42,7 @@ function Get-FSEffectiveAccess {
         [string] $Path,
         [Parameter(Mandatory = $false, Position = 0)]
         [System.Security.Principal.WindowsPrincipal] $Principal = (Get-CurrentUser),
+        [Parameter(ParameterSetName = 'HashTable')]
         [switch] $AsHashTable,
         [switch] $NoCompound
     )

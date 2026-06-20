@@ -50,7 +50,7 @@ function Get-ParameterValue {
         # @{Y = 'A'; X = 3}
     #>
     [OutputType([Hashtable])]
-    [Cmdletbinding(DefaultParameterSetName = 'Default', PositionalBinding = $false)]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', Justification = 'OK')]
     param
     (
         [Parameter(Mandatory = $true, Position = 0)]
