@@ -48,7 +48,7 @@ function Cast-Value {
         [switch] $UseDefaults
     )
 
-    dynamicParam {
+    dynamicparam {
         if (!$PSBoundParameters.ContainsKey('UseDefaults')) {
             $paramAttrib = New-ParameterAttribute
             $aliasAttrib = [Alias]::new(@('Id', 'IdField'))
@@ -83,7 +83,8 @@ function Cast-Value {
                         $keyValue = $Inputobject.$KeyField
                         $exception.data.Add("Key ($KeyField)", $keyValue)
                         if ($keyValue -is [string]) { $keyValue = "`"$keyValue`"" }
-                        $message = "Cannot convert value for record with {$keyField} = $keyValue and field {$property} = $origValue to type $type."
+                        $message = 'Cannot convert value for record with {0} = {1} and field {2} = {3} to type {4}.'
+                        $message = $message -f $keyField, $keyValue, $property, $origValue, $type
                     } else {
                         $message = "Cannot convert value for field {$property} = $origValue to type $type."
                     }

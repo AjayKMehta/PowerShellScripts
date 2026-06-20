@@ -74,6 +74,7 @@ function New-Wrapper {
         New-Wrapper ([Test.Foo]) -NoSwitch
     #>
     [CmdletBinding(DefaultParameterSetName = 'ChooseCons')]
+    [OutputType([string])]
     param
     (
         [Alias('udc', 'defcons')]

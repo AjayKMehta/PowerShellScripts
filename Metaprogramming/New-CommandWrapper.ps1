@@ -53,7 +53,7 @@ function New-CommandWrapper {
     information on the screen before processing the original pipeline.
 
     #>
-
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', Justification = 'OK')]
     param(
         ## The name of the command to extend
         [Parameter(Mandatory = $true)]
