@@ -1,3 +1,5 @@
+using namespace System.Diagnostics.CodeAnalysis
+
 function Get-PathEnv {
     <#
     .SYNOPSIS
@@ -36,7 +38,7 @@ function Get-PathEnv {
     .EXAMPLE
         Get-PathEnv 'Machine' | Out-File C:\temp\path-test.txt -Encoding UTF8
     #>
-    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '', Justification = 'OK.')]
+    [SuppressMessageAttribute('PSReviewUnusedParameter', '', Justification = 'OK.')]
     [CmdletBinding(DefaultParameterSetName = 'Target', PositionalBinding = $false)]
     param (
         [Parameter(Mandatory = $false, ParameterSetName = 'Target', Position = 0)]

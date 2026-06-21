@@ -1,5 +1,5 @@
 using namespace Microsoft.VisualBasic.FileIO
-
+using namespace System.Diagnostics.CodeAnalysis
 function Import-DataTable {
     <#
     .SYNOPSIS
@@ -16,6 +16,7 @@ function Import-DataTable {
     #>
     [CmdletBinding(DefaultParameterSetName = 'Default', PositionalBinding = $false)]
     [OutputType([System.Data.DataTable])]
+    [SuppressMessageAttribute('PSUseOutputTypeCorrectly', Justification = 'OK')]
     param
     (
         [ValidatePathExists(PathType = 'Leaf')]

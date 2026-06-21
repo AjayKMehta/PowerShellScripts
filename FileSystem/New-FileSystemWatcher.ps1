@@ -1,4 +1,5 @@
 using namespace System.IO
+using namespace System.Diagnostics.CodeAnalysis
 function New-FileSystemWatcher {
     <#
     .SYNOPSIS
@@ -53,6 +54,7 @@ function New-FileSystemWatcher {
         https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher?view=netcore-3.1
     #>
     [OutputType([System.IO.FileSystemWatcher])]
+    [SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', Justification = 'OK')]
     param
     (
         [ValidatePathExists()]

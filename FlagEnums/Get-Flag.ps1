@@ -1,4 +1,5 @@
 using namespace System.Collections
+using namespace system.Diagnostics.CodeAnalysis
 
 function Get-Flag {
     <#
@@ -50,6 +51,7 @@ function Get-Flag {
         Get-Flag $y -Show 'All'
     #>
     [CmdletBinding(DefaultParameterSetName = 'Default', PositionalBinding = $false)]
+    [SuppressMessageAttribute('PSUseOutputTypeCorrectly', Justification = 'OK')]
     param
     (
         [ValidateScript( { Test-FlagEnum ($_.GetType()) })]
