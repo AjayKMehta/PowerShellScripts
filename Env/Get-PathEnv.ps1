@@ -36,8 +36,9 @@ function Get-PathEnv {
     .EXAMPLE
         Get-PathEnv 'Machine' | Out-File C:\temp\path-test.txt -Encoding UTF8
     #>
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '', Justification = 'OK.')]
     [CmdletBinding(DefaultParameterSetName = 'Target', PositionalBinding = $false)]
-    Param (
+    param (
         [Parameter(Mandatory = $false, ParameterSetName = 'Target', Position = 0)]
         [Alias('Target')]
         [System.EnvironmentVariableTarget] $EnvTarget = [System.EnvironmentVariableTarget]::Process,

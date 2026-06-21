@@ -17,8 +17,9 @@ function Repair-PathEnv {
     .EXAMPLE
         'C:\Bogus;C:\temp;C:\temp;D:\git', 'D:\temp;D:\git2' | Repair-PathEnv -Confirm -Verbose
     #>
+    [OutputType([string])]
     [CmdletBinding(DefaultParameterSetName = 'Target', PositionalBinding = $false, SupportsShouldProcess = $true)]
-    Param (
+    param (
         [Parameter(Mandatory = $false, ParameterSetName = 'Target', Position = 0)]
         [Alias('Target')]
         [System.EnvironmentVariableTarget] $EnvTarget = [System.EnvironmentVariableTarget]::Process,
@@ -38,8 +39,8 @@ function Repair-PathEnv {
         [List[string]] $badPaths = [List[string]]::new()
         [int] $len = $Path.Length
         [int] $current = 0
-        [string] $val = $null;
-        [string] $pathToCheck = $null;
+        [string] $val = $null
+        [string] $pathToCheck = $null
         while ($current -lt $len - 1) {
             # Escaped entry
             if ($Path[$current] -eq '"') {

@@ -12,6 +12,7 @@ function Get-ProxyCode {
         gcm sls | Get-ProxyCode
     #>
     [CmdletBinding(DefaultParameterSetName = 'Default')]
+    [OutputType([string])]
     param
     (
         [Parameter(Mandatory = $true, ParameterSetName = 'Default', Position = 0)]

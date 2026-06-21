@@ -19,8 +19,9 @@ function Add-PathEnv {
     .EXAMPLE
         'C:\temp', 'D:\git', 'D:\temp' | Add-PathEnv 'C:\,%AppData%'
     #>
+    [OutputType([string])]
     [CmdletBinding(DefaultParameterSetName = 'Target', PositionalBinding = $false, SupportsShouldProcess = $true)]
-    Param (
+    param (
         [Parameter(Mandatory = $false, ParameterSetName = 'Target', Position = 0)]
         [Alias('Target')]
         [System.EnvironmentVariableTarget] $EnvTarget = [System.EnvironmentVariableTarget]::Process,
