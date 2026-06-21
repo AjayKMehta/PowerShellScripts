@@ -1,4 +1,5 @@
 using namespace System.Security.AccessControl
+using namespace system.Diagnostics.CodeAnalysis
 
 function Get-FSEffectiveAccess {
     <#
@@ -35,6 +36,7 @@ function Get-FSEffectiveAccess {
     #>
     [CmdletBinding(PositionalBinding = $false)]
     [OutputType([hashtable], ParameterSetName = 'HashTable')]
+    [SuppressMessageAttribute('PSUseConsistentWhitespace', Justification = 'False positive')]
     param
     (
         [SupportsWildCards()]

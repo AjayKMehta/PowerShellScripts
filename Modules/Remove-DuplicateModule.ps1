@@ -1,4 +1,5 @@
 using namespace System.Diagnostics.CodeAnalysis
+
 function Remove-DuplicateModule {
     <#
     .SYNOPSIS
@@ -24,7 +25,7 @@ function Remove-DuplicateModule {
         Remove-DuplicateModule -WhatIf
     #>
     [CmdletBinding(DefaultParameterSetName = 'Default', SupportsShouldProcess = $true, ConfirmImpact = 'High')]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '', Justification = 'OK.')]
+    [SuppressMessageAttribute('PSReviewUnusedParameter', '', Justification = 'OK.')]
     param (
         [Parameter(Mandatory = $false, ParameterSetName = 'Default')]
         #If true, it will keep the oldest version for a given module.

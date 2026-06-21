@@ -1,4 +1,6 @@
+using namespace System.Globalization
 using namespace System.Text.RegularExpressions
+
 function Decode-Unicode {
     <#
     .SYNOPSIS
@@ -29,7 +31,8 @@ function Decode-Unicode {
     )
 
     begin {
-        $regex = New-Object Regex @('\\u(?<Value>[a-f0-9]+)', ([RegexOptions]::Compiled -bor [RegexOptions]::IgnoreCase))
+        $options = ([RegexOptions]::Compiled -bor [RegexOptions]::IgnoreCase)
+        $regex = Regex::new('\\u(?<Value>[a-f0-9]+)', $options)
     }
 
     process {
@@ -41,7 +44,7 @@ function Decode-Unicode {
         }
         $regex.Replace($inputText,
             {
-                param ($m) ([char]([int]::Parse($m.groups['Value'].Value, [System.Globalization.NumberStyles]::HexNumber))).ToString() })
+                param ($m) ([char]([int]::Parse($m.groups['Value'].Value, [NumberStyles]::HexNumber))).ToString() })
     }
 
     end { $regex = $null }

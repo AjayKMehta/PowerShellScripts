@@ -1,4 +1,5 @@
 using namespace System.Management.Automation
+using namespace system.Diagnostics.CodeAnalysis
 
 function Get-ParameterValue {
     <#
@@ -50,7 +51,7 @@ function Get-ParameterValue {
         # @{Y = 'A'; X = 3}
     #>
     [OutputType([Hashtable])]
-    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', Justification = 'OK')]
+    [SuppressMessageAttribute('PSReviewUnusedParameter', Justification = 'OK')]
     param
     (
         [Parameter(Mandatory = $true, Position = 0)]

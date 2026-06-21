@@ -1,4 +1,6 @@
 using namespace System.Xml
+using namespace system.Diagnostics.CodeAnalysis
+
 function New-XmlWriterSettings {
     <#
     .SYNOPSIS
@@ -38,8 +40,8 @@ function New-XmlWriterSettings {
     #>
     [CmdletBinding(PositionalBinding = $false)]
     [OutputType([System.Xml.XmlWriterSettings])]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '', Justification = 'OK.')]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
+    [SuppressMessageAttribute('PSReviewUnusedParameter', '', Justification = 'OK.')]
+    [SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
     param
     (
         [Alias('cc')]
