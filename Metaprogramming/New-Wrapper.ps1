@@ -3,7 +3,6 @@ using namespace System.Management.Automation
 using namespace System.Diagnostics.CodeAnalysis
 
 function New-Wrapper {
-    [SuppressMessageAttribute('UseShouldProcessForStateChangingFunctions')]
     <#
     .SYNOPSIS
        Helps construct wrapper functions for creating instances of .NET and PowerShell classes.
@@ -75,6 +74,7 @@ function New-Wrapper {
     #>
     [CmdletBinding(DefaultParameterSetName = 'ChooseCons')]
     [OutputType([string])]
+    [SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', Justification = 'OK')]
     param
     (
         [Alias('udc', 'defcons')]

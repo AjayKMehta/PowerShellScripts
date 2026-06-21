@@ -31,9 +31,6 @@
 .EXAMPLE
     $choices = @{'Rock' ="&Rock"; 'Paper' = "&Paper"; 'Scissors' = '&Scissors'}
     Select-Item $choices -Caption 'Rock Paper Scissors' -ReturnKey
-.LINK
-    https://jamesone111.wordpress.com/2009/06/24/how-to-get-user-input-more-nicely-in-powershell/
-    https://jamesone111.wordpress.com/2011/12/10/powershell-hashtables-splatting-nesting-driving-selections-and-generally-simplifying-life/
 #>
 
 function Select-Item {

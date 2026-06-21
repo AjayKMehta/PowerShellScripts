@@ -1,5 +1,8 @@
+using namespace System.Diagnostics.CodeAnalysis
+
+[SuppressMessageAttribute('PSAvoidLongLines', Justification = 'Need for example code')]
+param()
 function Test-Flag {
-    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidLongLines', Justification = 'Need for example code')]
     <#
     .SYNOPSIS
         Returns true if EnumValue has any (or all) flag values.
@@ -25,6 +28,8 @@ function Test-Flag {
         Test-Flag $regex.Options $values Any
     #>
     [CmdletBinding(PositionalBinding = $false)]
+    [SuppressMessageAttribute('PSUseOutputTypeCorrectly', Justification = 'OK')]
+    [SuppressMessageAttribute('PSUseConsistentWhitespace', Justification = 'False positive')]
     param
     (
         [ValidateScript( { Test-FlagEnum ($_.GetType()) })]
@@ -40,7 +45,7 @@ function Test-Flag {
     [Type] $enumType = $EnumValue.GetType()
     $enumValues =
     foreach ($value in $Values) {
-        if ($newValue = $value -as $enumType) {
+        if (($newValue = $value -as $enumType)) {
             $newValue
         }
     }

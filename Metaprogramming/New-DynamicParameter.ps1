@@ -1,4 +1,5 @@
 using namespace System.Management.Automation
+using namespace System.Diagnostics.CodeAnalysis
 
 function New-DynamicParameter {
     <#
@@ -9,7 +10,7 @@ function New-DynamicParameter {
     #>
     [CmdletBinding(PositionalBinding = $false)]
     [OutputType([RuntimeDefinedParameter])]
-    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', Justification = 'OK')]
+    [SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', Justification = 'OK')]
     param (
         # Name of the dynamic parameter
         [Parameter(Mandatory = $true, Position = 0)]

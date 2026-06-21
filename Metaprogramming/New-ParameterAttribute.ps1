@@ -1,3 +1,5 @@
+using namespace System.Diagnostics.CodeAnalysis
+
 function New-ParameterAttribute {
     <#
     .SYNOPSIS
@@ -12,6 +14,7 @@ function New-ParameterAttribute {
 0        https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.parameterattribute
     #>
     [OutputType([Parameter])]
+    [SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', Justification = 'OK')]
     param
     (
         [switch] $Mandatory,
