@@ -2,8 +2,7 @@ name: Update PR
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
 
 concurrency:
   # github.event.pull_request.number || github.ref: pull request number or branch name if not a pull request
@@ -30,7 +29,7 @@ jobs:
         if: env.CHECK_PERMISSIONS == '1'
       - id: update-pr
         name: Update PR
-        uses: adRise/update-pr-branch@fe3b7082713cc6b51fab6cc16765fa6cbcae8ba4 # v0.11.0
+        uses: adRise/update-pr-branch@e96e796f4ab23ab388016fdaed7092de99bd71cf # v0.11.1
         with:
           token: ${{ secrets.ACTION_USER_TOKEN }}
           base: master
