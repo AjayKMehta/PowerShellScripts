@@ -1,6 +1,6 @@
 using namespace System.Diagnostics.CodeAnalysis
 
-[SuppressMessageAttribute('PSAvoidLongLines', Justification = 'Need for example code')]
+[SuppressMessageAttribute('PSAvoidLongLines', '', Justification = 'Need for example code')]
 param()
 function Test-Flag {
     <#
