@@ -48,6 +48,7 @@ function Install-Font {
                 Copy-Item -Path $fontPath -Destination $installPath -Force @PSBoundParameters -WhatIf:$false
 
                 if ($?) {
+                    # TO DO: Improve logic
                     if (Get-ItemProperty -Name $fontName -Path $registryPath @PSBoundParameters) {
                         Write-Verbose "Font already registered: $fontFile"
                     } else {
